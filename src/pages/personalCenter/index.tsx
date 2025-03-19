@@ -52,26 +52,50 @@ const PersonalCenter: React.FC = () => {
             </View>
           </View>
           <View className="down">
-            <View className='down-item'>
-              <View className='text1'>15/34</View>
-              <View className='text2'>优质回答</View>
+            <View className="down-item">
+              <View className="text1">15/34</View>
+              <View className="text2">优质回答</View>
             </View>
-            <View className='down-item'>
-              <View className='text1'>24</View>
-              <View className='text2'>提问</View>
+            <View className="down-item">
+              <View className="text1">24</View>
+              <View className="text2">提问</View>
             </View>
-            <View className='down-item'>
-              <View className='text1'>89</View>
-              <View className='text2'>粉丝</View>
+            <View className="down-item">
+              <View className="text1">89</View>
+              <View className="text2">粉丝</View>
             </View>
-            <View className='change'>
-            <AtButton size='small' type="primary" circle>修改资料</AtButton>
+            <View className="change">
+              <AtButton size="small" type="primary" circle>
+                修改资料
+              </AtButton>
             </View>
           </View>
         </View>
       </View>
+      <View>
+        <View
+          style={{
+            display: "flex",
+            margin: 0,
+            padding: "20rpx",
+            backgroundColor: "#ffffff",
+            fontSize: "36rpx",
+          }}
+        >
+          历史频道
+        </View>
+        <View className='cardList'>
+          <View className="card">
 
-      <View></View>
+          </View>
+          <View className="card">
+
+          </View>
+          <View className="card">
+
+          </View>
+        </View>
+      </View>
     </View>
   );
 };

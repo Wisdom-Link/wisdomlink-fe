@@ -5,7 +5,7 @@ import  SearchBox  from "../../components/SearchBox";
 import cartoon from "../../assets/头像 女孩.png";
 import logo from "../../assets/手机机器人.png";
 import "./index.scss";
-import Card from "../../components/Card";
+import AICard from "../../components/AICard";
 
 const cardList = [
   { url: cartoon, title: "标题1", label: "标签1" },
@@ -58,7 +58,7 @@ const mainPage: React.FC = () => {
       </View>
       <View className="AiList">
       {cardList.map((item, index) => (
-          <Card key={index} url={item.url} title={item.title} label={item.label} />
+          <AICard key={index} url={item.url} title={item.title} label={item.label} />
         ))}
       </View>
     </View>

@@ -110,6 +110,23 @@
       }
   }
 
+  .cardList {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;  // 允许换行
+    gap: 4%;  // 控制 card 之间的间距
+    padding: 4%;
+    border-radius: 50rpx;
+    overflow: hidden;  // 如果 card 贴边，确保内容不会溢出
+
+  .card {
+    width: 44%;  // 每个卡片占据一半宽度，留一点间距
+    height: 400rpx;  // 根据需要调整高度
+    background-color: #ffffff;
+    border-radius: 20rpx;
+    margin-bottom: 30rpx;  // 控制 card 之间的间距
+  }
+}
 
   .mask {
     top: 0;
