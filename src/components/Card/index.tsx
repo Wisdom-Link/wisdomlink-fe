@@ -1,3 +1,4 @@
+/* eslint-disable jsx-quotes */
 import { View,Image,Button } from "@tarojs/components"
 import "./Card.scss"
 

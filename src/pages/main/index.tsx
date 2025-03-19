@@ -1,6 +1,6 @@
 /* eslint-disable jsx-quotes */
 import { useState } from "react";
-import { View, Text, Image,Swiper, SwiperItem,Input } from "@tarojs/components";
+import { View, Text, Image,Swiper, SwiperItem} from "@tarojs/components";
 import  SearchBox  from "../../components/SearchBox";
 import cartoon from "../../assets/头像 女孩.png";
 import logo from "../../assets/手机机器人.png";
@@ -40,7 +40,8 @@ const mainPage: React.FC = () => {
         indicatorActiveColor='#333'
         circular
         indicatorDots
-        autoplay>
+        autoplay
+      >
         <SwiperItem>
           <View className='demo-text-1'>1</View>
         </SwiperItem>
