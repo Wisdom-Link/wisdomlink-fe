@@ -1,13 +1,20 @@
 /* eslint-disable jsx-quotes */
-import Taro from '@tarojs/taro';
-import React, { useState } from 'react';
-import {AtAvatar,AtTag,AtRate,AtButton } from 'taro-ui'
-import {View} from "@tarojs/components";
+import React, { useState } from "react";
+import { AtAvatar, AtTag, AtRate, AtButton } from "taro-ui";
+import { View } from "@tarojs/components";
+import Card from "../../components/Card";
 import avatar from "../../assets/头像.jpeg";
+import test from "../../assets/风景图.jpg";
 import "./index.scss";
 
 const PersonalCenter: React.FC = () => {
   const [stars, setStars] = useState(0);
+  const history = [
+    { size: "large", url: test, title: "考研", label: "英语真题" },
+    { size: "large", url: test, title: "考研", label: "英语真题" },
+    { size: "large", url: test, title: "考研", label: "英语真题" },
+  ];
+
   const handleStarChange = (value) => {
     setStars(value);
   };
@@ -84,16 +91,16 @@ const PersonalCenter: React.FC = () => {
         >
           历史频道
         </View>
-        <View className='cardList'>
-          <View className="card">
-
-          </View>
-          <View className="card">
-
-          </View>
-          <View className="card">
-
-          </View>
+        <View className="cardList">
+          {history.map((card, index) => (
+            <Card
+              key={index}
+              size={card.size}
+              url={card.url}
+              title={card.title}
+              label={card.label}
+            />
+          ))}
         </View>
       </View>
     </View>

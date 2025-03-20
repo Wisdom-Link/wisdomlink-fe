@@ -1,6 +1,6 @@
 /* eslint-disable jsx-quotes */
 import { useState } from "react";
-import { View, Text, Image,Swiper, SwiperItem} from "@tarojs/components";
+import { View,Image,Swiper, SwiperItem} from "@tarojs/components";
 import  SearchBox  from "../../components/SearchBox";
 import cartoon from "../../assets/头像 女孩.png";
 import logo from "../../assets/手机机器人.png";

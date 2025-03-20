@@ -1,9 +1,14 @@
 /* eslint-disable jsx-quotes */
-import { View,Image,Button } from "@tarojs/components"
-import "./Card.scss"
+import { View, Image, Text} from "@tarojs/components";
+import { AtTag } from "taro-ui";
+import "./Card.scss";
 
-const Card = ({ size, url, title, label = size === 'small' ? undefined : '' }) => {
-
+const Card = ({
+  size,
+  url,
+  title,
+  label = size === "small" ? undefined : "",
+}) => {
   switch (size) {
     case "small":
       return (
@@ -15,7 +20,7 @@ const Card = ({ size, url, title, label = size === 'small' ? undefined : '' }) =
         </View>
       );
 
-      case "middle":
+    case "middle":
       return (
         <View className="card-middle">
           <View className="picture-middle">
@@ -26,20 +31,31 @@ const Card = ({ size, url, title, label = size === 'small' ? undefined : '' }) =
         </View>
       );
 
-      case "large":
+    case "large":
       return (
-        <View className="card-large">
-          <View className="picture-large">
-            <Image className="card-icon" src={url} />
-          </View>
+        <View
+          className="card-large"
+          style={{
+            width: "44%",
+            height: "400rpx",
+            backgroundColor: "#ffffff",
+            backgroundImage: `url(${url})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            borderRadius: "20rpx",
+            marginBottom: "30rpx",
+          }}
+        >
           <View className="contents-large">
-            <View className="title-large">{title}</View>
+            <View className="title-large">
+              <Text>{title}</Text>
+              <View className="tag"><AtTag size="small">30人询问</AtTag></View>
+            </View>
             <View className="text-large">{label}</View>
           </View>
         </View>
       );
   }
-}
-
+};
 
 export default Card;

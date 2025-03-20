@@ -1,15 +1,18 @@
 .card-small {
-  width: 50rpx;
-  height: 80rpx;
+  width: 150rpx;
+  height: 180rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
+  border-radius: 30rpx;
+  margin: 10rpx 15rpx;
+  box-shadow: 4rpx 4rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影
 
   .picture-small {
     width: 100%;
-    height: 50rpx;
+    height: 150rpx;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,49 +29,91 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12rpx;
+    font-size: 30rpx;
     color: #000000;
   }
 }
 
 .card-middle {
-  width: 120rpx;
-  height: 100rpx;
+  width: 300rpx;
+  height: 200rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
+  border-radius: 20rpx;
+  margin: 10rpx 15rpx;
+  overflow: hidden;
+  box-shadow: 4rpx 4rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影
 
   .picture-middle {
     width: 100%;
-    height: 60rpx;
+    height: 200rpx;
     display: flex;
     align-items: center;
     justify-content: center;
 
    .icon-middle {
-      width: 90%;
-      height: 90%;
+      width: 100%;
+      height: 100%;
     }
   }
 
  .title-middle{
     width: 100%;
-    height: 20rpx;
+    height: 30rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16rpx;
+    font-size: 30rpx;
     color: #000000;
+    margin: 5rpx 0;
   }
   .text-middle{
     width: 100%;
-    height: 20rpx;
+    height: 25rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12rpx;
+    font-size: 25rpx;
     color: #ddd8d8;
   }
+}
+
+.contents-large{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 75% 20rpx 20rpx 20rpx;
+
+  .title-large {
+    width: 100%;
+    height: 30rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; // 左右对齐
+    font-size: 30rpx;
+    color: #ffffff;
+    margin: 20rpx 0;
+  }
+
+  .tag {
+    display: flex;
+    align-items: center; // 确保垂直居中
+    padding-right: 30rpx;
+  }
+
+  .text-large {
+    width: 100%;
+    height: 25rpx;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: 25rpx;
+    color: #ffffff;
+
+  }
+
 }

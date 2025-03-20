@@ -4,8 +4,35 @@
 
 .title{
   display: flex;
+  width: 100%;
   margin: 0 0;
-  padding:20rpx 20rpx;
+  padding:20rpx 5%;
   background-color: #ffffff;
   font-size: larger;
 }
+
+.scroll-container {
+  width: 100%;
+  overflow-x: auto; // 允许横向滚动
+  white-space: nowrap; // 禁止换行
+  -webkit-overflow-scrolling: touch; // iOS 兼容
+  background-color: #ffffff;
+}
+
+.scroll-content {
+  display: flex; // 让 Card 横向排列
+  flex-wrap: nowrap; // 禁止换行
+  gap: 10px; // 让 Card 之间有间距
+  min-width: max-content; // 确保内容不会折行
+}
+
+.answerer{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;  // 允许换行
+  gap: 4%;  // 控制 card 之间的间距
+  padding: 4%;
+  background-color: #ffffff;
+  overflow: hidden;  // 如果 card 贴边，确保内容不会溢出
+}
+
