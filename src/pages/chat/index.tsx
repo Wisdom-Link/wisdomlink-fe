@@ -4,8 +4,8 @@ import { View,Image,Swiper, SwiperItem} from "@tarojs/components";
 import  SearchBox  from "../../components/SearchBox";
 import cartoon from "../../assets/头像 女孩.png";
 import logo from "../../assets/手机机器人.png";
-import "./index.scss";
 import AICard from "../../components/AICard";
+import "./index.scss";
 
 const cardList = [
   { url: cartoon, title: "标题1", label: "标签1" },
@@ -13,7 +13,7 @@ const cardList = [
   { url: cartoon, title: "标题3", label: "标签3" },
 ];
 
-const mainPage: React.FC = () => {
+const ChatPage: React.FC = () => {
 
 
   return (
@@ -65,4 +65,4 @@ const mainPage: React.FC = () => {
   );
 };
 
-export default mainPage;
+export default ChatPage;
