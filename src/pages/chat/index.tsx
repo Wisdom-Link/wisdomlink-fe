@@ -1,65 +1,32 @@
 /* eslint-disable jsx-quotes */
 import { useState } from "react";
-import { View,Image,Swiper, SwiperItem} from "@tarojs/components";
-import  SearchBox  from "../../components/SearchBox";
+import { View, Image,Button } from "@tarojs/components";
+import { AtButton } from 'taro-ui'
 import cartoon from "../../assets/头像 女孩.png";
-import logo from "../../assets/手机机器人.png";
-import AICard from "../../components/AICard";
 import "./index.scss";
 
-const cardList = [
-  { url: cartoon, title: "标题1", label: "标签1" },
-  { url: cartoon, title: "标题2", label: "标签2" },
-  { url: cartoon, title: "标题3", label: "标签3" },
-];
-
 const ChatPage: React.FC = () => {
-
-
   return (
     <View className="page">
       <View className="header">
-        <View className="left">
-          <View className="title1">Hi~ 你好!</View>
-          <View className="title2">有什么问题都可以问哦~</View>
+        <View className="card">
+          <View className="up">
+            <View className="picture">
+              <Image className="card-icon" src={cartoon}></Image>
+            </View>
+            <View className="contents">
+              <View className="card-title">哈喽~</View>
+              <View className="text">我是解答员xxx, 很高兴为您服务</View>
+            </View>
+          </View>
+          <View className="down">
+            <View className="down-text">评价:</View>
+            <Button className="btn">优秀</Button>
+            <Button className="btn">良好</Button>
+            <Button className="btn">及格</Button>
+            <Button className="btn">差劲</Button>
+          </View>
         </View>
-        <View className="right">
-          <Image className="icon" src={logo} mode="heightFix" />
-        </View>
-      </View>
-      <View className="search">
-        <SearchBox />
-      </View>
-      <View className="title">
-        问答社区
-      </View>
-      <View className="banner">
-      <Swiper
-        className='test-h'
-        indicatorColor='#999'
-        indicatorActiveColor='#333'
-        circular
-        indicatorDots
-        autoplay
-      >
-        <SwiperItem>
-          <View className='demo-text-1'>1</View>
-        </SwiperItem>
-        <SwiperItem>
-          <View className='demo-text-2'>2</View>
-        </SwiperItem>
-        <SwiperItem>
-          <View className='demo-text-3'>3</View>
-        </SwiperItem>
-      </Swiper>
-      </View>
-      <View className="title">
-        AI智能小问
-      </View>
-      <View className="AiList">
-      {cardList.map((item, index) => (
-          <AICard key={index} url={item.url} title={item.title} label={item.label} />
-        ))}
       </View>
     </View>
   );
