@@ -1,5 +1,6 @@
 export default defineAppConfig({
   pages: [
+    'pages/changeInfo/index',
     'pages/chat/index',
     'pages/login/index',
     'pages/index/index',
