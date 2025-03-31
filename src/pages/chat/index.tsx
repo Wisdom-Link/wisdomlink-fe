@@ -1,6 +1,6 @@
 /* eslint-disable jsx-quotes */
 import { useState } from "react";
-import { View, Image, Button, Textarea, CommonEvent } from "@tarojs/components";
+import { View, Image, Button} from "@tarojs/components";
 import { AtTextarea } from "taro-ui";
 import cartoon from "../../assets/头像 女孩.png";
 import "./index.scss";
