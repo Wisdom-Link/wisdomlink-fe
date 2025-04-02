@@ -18,20 +18,17 @@ const chatData: ChatItem[] = [
       "你好，我是解答员xxx, 很高兴为您服务,你好，我是解答员xxx, 很高兴为您服务",
   },
   { type: "user", content: "你好" },
-  { type: "user", content: "你好" },
   {
     type: "ai",
     content:
       "你好，我是解答员xxx, 很高兴为您服务,你好，我是解答员xxx, 很高兴为您服务",
   },
   { type: "user", content: "你好" },
-  { type: "user", content: "你好" },
   {
     type: "ai",
     content:
       "你好，我是解答员xxx, 很高兴为您服务,你好，我是解答员xxx, 很高兴为您服务",
   },
-  { type: "user", content: "你好" },
   { type: "user", content: "你好" },
   {
     type: "ai",
