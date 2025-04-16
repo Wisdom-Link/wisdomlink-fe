@@ -16,18 +16,10 @@ const cardList = [
 ];
 
 const MainPage: React.FC = () => {
-  const changeRoute=()=>{
-    Taro.switchTab({
-      url: '/pages/chat/index'
-    })
+  const changeRoute=(id:number)=>{
+    Taro.setStorageSync('chatID',{id});
+    Taro.switchTab({ url: '/pages/chat/index' });
   }
-
-  useEffect(() => {
-    const token = Taro.getStorageSync('token');
-    if (!token) {
-      Taro.setStorageSync('token', '123456');
-    }
-  }, []);
 
   return (
     <View className="page">
@@ -71,7 +63,7 @@ const MainPage: React.FC = () => {
       </View>
       <View className="AiList">
       {cardList.map((item) => (
-          <AICard key={item.id} url={item.url} title={item.title} label={item.label} onClick={()=>changeRoute()} />
+          <AICard key={item.id} url={item.url} title={item.title} label={item.label} onClick={()=>changeRoute(item.id)} />
         ))}
       </View>
     </View>

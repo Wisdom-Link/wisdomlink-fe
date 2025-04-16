@@ -1,5 +1,6 @@
 /* eslint-disable jsx-quotes */
-import { useState } from "react";
+import { useState} from "react";
+import Taro ,{ useDidShow } from "@tarojs/taro";
 import { View, Image, Button} from "@tarojs/components";
 import { AtTextarea } from "taro-ui";
 import cartoon from "../../assets/头像 女孩.png";
@@ -43,6 +44,14 @@ const ChatPage: React.FC = () => {
   const inputChange = (value) => {
     setInput(value);
   };
+
+  useDidShow(() => {
+    const params = Taro.getStorageSync('chatID');
+    console.log("接收到的参数：", params);
+    // 用完可以清除
+    Taro.removeStorageSync('chatID');
+  });
+
 
   return (
     <View className="page">
