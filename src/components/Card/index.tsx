@@ -3,16 +3,25 @@ import { View, Image, Text} from "@tarojs/components";
 import { AtTag } from "taro-ui";
 import "./Card.scss";
 
-const Card = ({
+interface CardProps {
+  size: string,
+  url: string;
+  title: string;
+  label?: string;
+  onClick?: () => void; // 新增点击事件回调
+}
+
+const Card:React.FC<CardProps> = ({
   size,
   url,
   title,
   label = size === "small" ? undefined : "",
+  onClick
 }) => {
   switch (size) {
     case "small":
       return (
-        <View className="card-small">
+        <View className="card-small" onClick={onClick}>
           <View className="picture-small">
             <Image className="icon-small" src={url} />
           </View>
@@ -22,7 +31,7 @@ const Card = ({
 
     case "middle":
       return (
-        <View className="card-middle">
+        <View className="card-middle" onClick={onClick}>
           <View className="picture-middle">
             <Image className="icon-middle" src={url} />
           </View>
@@ -45,6 +54,7 @@ const Card = ({
             borderRadius: "20rpx",
             marginBottom: "30rpx",
           }}
+          onClick={onClick}
         >
           <View className="contents-large">
             <View className="title-large">

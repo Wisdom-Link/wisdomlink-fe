@@ -1,5 +1,6 @@
 /* eslint-disable jsx-quotes */
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Taro from "@tarojs/taro";
 import { View,Image,Swiper, SwiperItem} from "@tarojs/components";
 import  SearchBox  from "../../components/SearchBox";
 import cartoon from "../../assets/头像 女孩.png";
@@ -7,14 +8,26 @@ import logo from "../../assets/手机机器人.png";
 import "./index.scss";
 import AICard from "../../components/AICard";
 
+
 const cardList = [
-  { url: cartoon, title: "标题1", label: "标签1" },
-  { url: cartoon, title: "标题2", label: "标签2" },
-  { url: cartoon, title: "标题3", label: "标签3" },
+  {id:1, url: cartoon, title: "标题1", label: "标签1" },
+  {id:2, url: cartoon, title: "标题2", label: "标签2" },
+  {id:3, url: cartoon, title: "标题3", label: "标签3" },
 ];
 
-const mainPage: React.FC = () => {
+const MainPage: React.FC = () => {
+  const changeRoute=()=>{
+    Taro.switchTab({
+      url: '/pages/chat/index'
+    })
+  }
 
+  useEffect(() => {
+    const token = Taro.getStorageSync('token');
+    if (!token) {
+      Taro.setStorageSync('token', '123456');
+    }
+  }, []);
 
   return (
     <View className="page">
@@ -57,12 +70,12 @@ const mainPage: React.FC = () => {
         AI智能小问
       </View>
       <View className="AiList">
-      {cardList.map((item, index) => (
-          <AICard key={index} url={item.url} title={item.title} label={item.label} />
+      {cardList.map((item) => (
+          <AICard key={item.id} url={item.url} title={item.title} label={item.label} onClick={()=>changeRoute()} />
         ))}
       </View>
     </View>
   );
 };
 
-export default mainPage;
+export default MainPage;

@@ -1,12 +1,12 @@
 export default defineAppConfig({
   pages: [
+    'pages/personalCenter/index',
+    'pages/index/index',
     'pages/goodAnswerer/index',
     'pages/personInfo/index',
     'pages/changeInfo/index',
     'pages/chat/index',
     'pages/login/index',
-    'pages/index/index',
-    'pages/personalCenter/index',
     'pages/community/index'
   ],
   tabBar: {

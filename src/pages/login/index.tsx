@@ -41,6 +41,7 @@ const LoginPage: React.FC = () => {
       });
   };
 
+
   return (
     <View className="page">
       <View className="header">

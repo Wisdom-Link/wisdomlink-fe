@@ -19,49 +19,49 @@ const AnswererCard = ({ url, title, label }) => {
   );
 };
 
-const AnswerActions = () => {
-  const [liked, setLiked] = useState(false);
-  const [collected, setCollected] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+// const AnswerActions = () => {
+//   const [liked, setLiked] = useState(false);
+//   const [collected, setCollected] = useState(false);
+//   const [showComments, setShowComments] = useState(false);
 
-  return (
-    <View className="answer-actions">
-      {/* 点赞按钮 */}
-      <Button
-        className={`action-btn ${liked ? "liked" : ""}`}
-        onClick={() => setLiked(!liked)}
-      >
-        <AtIcon value="heart" size="16" color={liked ? "#ff4d4f" : "#888"} />
-        <Text>{liked ? "已点赞" : "点赞"}</Text>
-      </Button>
+//   return (
+//     <View className="answer-actions">
+//       {/* 点赞按钮 */}
+//       <Button
+//         className={`action-btn ${liked ? "liked" : ""}`}
+//         onClick={() => setLiked(!liked)}
+//       >
+//         <AtIcon value="heart" size="16" color={liked ? "#ff4d4f" : "#888"} />
+//         <Text>{liked ? "已点赞" : "点赞"}</Text>
+//       </Button>
 
-      {/* 收藏按钮 */}
-      <Button
-        className={`action-btn ${collected ? "collected" : ""}`}
-        onClick={() => setCollected(!collected)}
-      >
-        <AtIcon value="star" size="16" color={collected ? "#f5c518" : "#888"} />
-        <Text>{collected ? "已收藏" : "收藏"}</Text>
-      </Button>
+//       {/* 收藏按钮 */}
+//       <Button
+//         className={`action-btn ${collected ? "collected" : ""}`}
+//         onClick={() => setCollected(!collected)}
+//       >
+//         <AtIcon value="star" size="16" color={collected ? "#f5c518" : "#888"} />
+//         <Text>{collected ? "已收藏" : "收藏"}</Text>
+//       </Button>
 
-      {/* 查看评论按钮 */}
-      <Button
-        className="action-btn"
-        onClick={() => setShowComments(!showComments)}
-      >
-        <AtIcon value="message" size="16" color="#888" />
-        <Text>{showComments ? "隐藏评论" : "查看评论"}</Text>
-      </Button>
+//       {/* 查看评论按钮 */}
+//       <Button
+//         className="action-btn"
+//         onClick={() => setShowComments(!showComments)}
+//       >
+//         <AtIcon value="message" size="16" color="#888" />
+//         <Text>{showComments ? "隐藏评论" : "查看评论"}</Text>
+//       </Button>
 
-      {/* 评论区（动态显示） */}
-      {showComments && (
-        <View className="comment-section">
-          <Text>这里是评论区...</Text>
-        </View>
-      )}
-    </View>
-  );
-};
+//       {/* 评论区（动态显示） */}
+//       {showComments && (
+//         <View className="comment-section">
+//           <Text>这里是评论区...</Text>
+//         </View>
+//       )}
+//     </View>
+//   );
+// };
 
 const Answer = () => {
   const [inputValue, setInputValue] = useState("");
@@ -108,11 +108,11 @@ const Answer = () => {
         </View>
       </View>
       <View className="answer-tag">
-        <AtTag size="small" circle>
+        <AtTag circle>
           保研
         </AtTag>
       </View>
-      <View className="answer-opinion">
+      {/* <View className="answer-opinion">
         <AnswerActions />
       </View>
       <View className="answer-input-container">
@@ -126,7 +126,7 @@ const Answer = () => {
         <Button className="answer-send-btn" onClick={handleSend}>
           发送
         </Button>
-      </View>
+      </View> */}
     </View>
   );
 };

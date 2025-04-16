@@ -1,5 +1,6 @@
 /* eslint-disable jsx-quotes */
 import React, { useState } from "react";
+import Taro from "@tarojs/taro";
 import { AtAvatar, AtTag, AtRate, AtButton } from "taro-ui";
 import { View } from "@tarojs/components";
 import Card from "../../components/Card";
@@ -18,6 +19,12 @@ const PersonalCenter: React.FC = () => {
   const handleStarChange = (value) => {
     setStars(value);
   };
+
+  const changeRoute=()=>{
+      Taro.navigateTo({
+        url: '/pages/changeInfo/index'
+      })
+    }
 
   return (
     <View className="page">
@@ -72,7 +79,7 @@ const PersonalCenter: React.FC = () => {
               <View className="text2">粉丝</View>
             </View>
             <View className="change">
-              <AtButton size="small" type="primary" circle>
+              <AtButton size="small" type="primary" circle onClick={changeRoute}>
                 修改资料
               </AtButton>
             </View>
