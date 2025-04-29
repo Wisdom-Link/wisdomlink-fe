@@ -2,16 +2,18 @@
 import { useState } from "react";
 import Taro from "@tarojs/taro";
 import { View, Image, Text } from "@tarojs/components";
-import { AtForm, AtInput, AtButton, AtMessage, AtIcon } from "taro-ui";
+import { AtInput, AtButton, AtMessage, AtIcon } from "taro-ui";
 import logo from "../../assets/智汇桥logo.png";
 import "./index.scss";
+import { request } from "../../utils/request";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // 提交登录请求
-  const handleSubmit = () => {
+  // 登录
+  const handleLogin = () => {
     if (!username) {
       Taro.atMessage({ message: "请输入用户名", type: "error" });
       return;
@@ -20,20 +22,18 @@ const LoginPage: React.FC = () => {
       Taro.atMessage({ message: "请输入密码", type: "error" });
       return;
     }
-
-    // 发送登录请求到服务器
-    Taro.request({
-      url: "https://你的服务器地址/api/login",
+    request({
+      url: "/user/login",
       method: "POST",
       data: { username, password },
     })
-      .then((res) => {
-        if (res.data.success) {
+      .then((data) => {
+        if (data.success) {
           Taro.atMessage({ message: "登录成功", type: "success" });
-          Taro.setStorageSync("token", res.data.token);
-          Taro.switchTab({ url: "/pages/home/index" }); // 登录成功后跳转到首页
+          Taro.setStorageSync("token", data.token);
+          Taro.switchTab({ url: "/pages/index/index" });
         } else {
-          Taro.atMessage({ message: res.data.message, type: "error" });
+          Taro.atMessage({ message: data.message, type: "error" });
         }
       })
       .catch(() => {
@@ -41,6 +41,21 @@ const LoginPage: React.FC = () => {
       });
   };
 
+  // 注册
+  const handleRegister = () => {
+    if (!username) {
+      Taro.atMessage({ message: "请输入用户名", type: "error" });
+      return;
+    }
+    if (!password) {
+      Taro.atMessage({ message: "请输入密码", type: "error" });
+      return;
+    }
+    // 用户名和密码都填写后跳转并传参
+    Taro.navigateTo({
+      url: `/pages/personInfo/index?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+    });
+  };
 
   return (
     <View className="page">
@@ -56,34 +71,63 @@ const LoginPage: React.FC = () => {
         <View className="text">有问必答</View>
         <View className="login-container">
           <AtMessage />
-          <AtForm onSubmit={handleSubmit} className="login-form">
-            <AtInput
-              className="custom-input"
-              name="username"
-              title="用户名："
-              type="text"
-              placeholder="请输入用户名"
-              value={username}
-              onChange={(value) => setUsername(value as string)}
-            />
-            <AtInput
-              className="custom-input"
-              name="password"
-              title="密码："
-              type="password"
-              placeholder="请输入密码"
-              value={password}
-              onChange={(value) => setPassword(value as string)}
-            />
+          <View style={{ height: 10 }} />
+          {/* 受控组件获取用户名和密码 */}
+          <AtInput
+            className="custom-input"
+            name="username"
+            title="用户名："
+            type="text"
+            placeholder="请输入用户名"
+            value={username}
+            onChange={(value) => setUsername(value as string)}
+          />
+          <AtInput
+            className="custom-input"
+            name="password"
+            title="密码："
+            type={showPassword ? "text" : "password"}
+            placeholder="请输入密码"
+            value={password}
+            onChange={(value) => setPassword(value as string)}
+          >
+            {/* 密码可视化按钮，点击按住显示密码 */}
+            <View
+              style={{
+                padding: "0 20rpx",
+                color: "#999",
+                fontSize: "32rpx",
+                display: "flex",
+                alignItems: "center",
+                height: "100%",
+                cursor: "pointer"
+              }}
+              onTouchStart={() => setShowPassword(true)}
+              onTouchEnd={() => setShowPassword(false)}
+              onTouchCancel={() => setShowPassword(false)}
+            >
+              <AtIcon value={showPassword ? "eye" : "eye-off"} size="20" color="black" />
+            </View>
+          </AtInput>
+          <View className="button-container">
             <AtButton
               type="primary"
-              formType="submit"
               circle
               className="black-button"
+              onClick={handleLogin}
             >
-              登录/注册
+              登录
             </AtButton>
-          </AtForm>
+            <AtButton
+              type="secondary"
+              circle
+              className="black-button"
+              onClick={handleRegister}
+              style={{ marginTop: "20rpx" }}
+            >
+              注册
+            </AtButton>
+          </View>
         </View>
       </View>
     </View>

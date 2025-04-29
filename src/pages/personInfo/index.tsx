@@ -1,10 +1,11 @@
 /* eslint-disable jsx-quotes */
 import { useState, useCallback } from "react";
-// import Taro from "@tarojs/taro";
+import Taro from "@tarojs/taro"; // 新增
 import { View, Image, Picker, Button } from "@tarojs/components";
 import { AtList, AtListItem, AtButton  } from "taro-ui";
 import logo from "../../assets/智汇桥logo.png";
 import "./index.scss";
+import { request } from "../../utils/request";
 
 const PersonInfo: React.FC = () => {
   const [dateSel, setDateSel] = useState("请选择日期");
@@ -24,12 +25,38 @@ const PersonInfo: React.FC = () => {
     setGender(seletedGender); //
   };
 
+  // 新增：注册接口调用
+  const handleRegister = () => {
+    if (!gender || dateSel === "请选择日期" || selectedJob === "请选择工作") {
+      Taro.showToast({ title: "请完善信息", icon: "none" });
+      return;
+    }
+    request({
+      url: "/user/register",
+      method: "POST",
+      data: {
+        gender,
+        birthday: dateSel,
+        job: selectedJob,
+      },
+    })
+      .then((data) => {
+        if (data.success) {
+          Taro.showToast({ title: "注册成功", icon: "success" });
+          // 注册成功后的跳转或操作
+        } else {
+          Taro.showToast({ title: data.message || "注册失败", icon: "none" });
+        }
+      })
+      .catch(() => {
+        Taro.showToast({ title: "网络错误", icon: "none" });
+      });
+  };
+
   return (
     <View className="page">
       <View className="logo-container">
-
-          <Image src={logo} className="logo" />
-
+        <Image src={logo} className="logo" />
       </View>
       <View className="title">性别</View>
       <View className="gender-buttons">
@@ -45,7 +72,7 @@ const PersonInfo: React.FC = () => {
         >
           女
         </Button>
-     </View>
+      </View>
 
       <View className="title">生日</View>
       <View style={{margin:"10rpx"}}>
@@ -65,7 +92,14 @@ const PersonInfo: React.FC = () => {
         </Picker>
       </View>
       <View className="btn-container">
-        <AtButton type='primary' size='normal' className="btn" >确定</AtButton>
+        <AtButton
+          type='primary'
+          size='normal'
+          className="btn"
+          onClick={handleRegister} 
+        >
+          确定
+        </AtButton>
       </View>
     </View>
   );

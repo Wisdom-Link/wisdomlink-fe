@@ -89,6 +89,7 @@ const Answer = () => {
           </View>
           <View className="answer-time">
             <Text>湖北省</Text>
+            <View style={{ width: 6 }} />
             <Text>一个小时前</Text>
           </View>
         </View>
