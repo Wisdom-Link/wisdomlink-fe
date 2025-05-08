@@ -1,13 +1,26 @@
 /* eslint-disable jsx-quotes */
-import { useState, useCallback } from "react";
-import Taro from "@tarojs/taro"; // 新增
-import { View, Image, Picker, Button } from "@tarojs/components";
-import { AtList, AtListItem, AtButton  } from "taro-ui";
-import logo from "../../assets/智汇桥logo.png";
+import { useState, useCallback, useEffect } from "react";
+import Taro, { getCurrentInstance } from "@tarojs/taro"; // 新增 getCurrentInstance
+import { View, Picker, Button, Input } from "@tarojs/components"; // 新增 Input
+import { AtList, AtListItem, AtButton, AtInput } from "taro-ui";
 import "./index.scss";
 import { request } from "../../utils/request";
 
 const PersonInfo: React.FC = () => {
+  // 新增：用户名、密码、验证密码
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
+
+  // 页面加载时从url获取参数
+  useEffect(() => {
+    const router = getCurrentInstance().router;
+    if (router && router.params) {
+      setUsername(router.params.username || "");
+      setPassword(router.params.password || "");
+    }
+  }, []);
+
   const [dateSel, setDateSel] = useState("请选择日期");
   const [jobList] = useState(["学生", "教师", "医生", "设计师"]);
   const [selectedJob, setSelectedJob] = useState("请选择工作");
@@ -22,7 +35,7 @@ const PersonInfo: React.FC = () => {
   }, [jobList]);
 
   const handleGenderChange = (seletedGender: string) => {
-    setGender(seletedGender); //
+    setGender(seletedGender);
   };
 
   // 新增：注册接口调用
@@ -31,10 +44,20 @@ const PersonInfo: React.FC = () => {
       Taro.showToast({ title: "请完善信息", icon: "none" });
       return;
     }
+    if (!verifyPassword) {
+      Taro.showToast({ title: "请填写验证密码", icon: "none" });
+      return;
+    }
+    if (password !== verifyPassword) {
+      Taro.showToast({ title: "两次密码不一致", icon: "none" });
+      return;
+    }
     request({
       url: "/user/register",
       method: "POST",
       data: {
+        username,
+        password,
         gender,
         birthday: dateSel,
         job: selectedJob,
@@ -55,8 +78,15 @@ const PersonInfo: React.FC = () => {
 
   return (
     <View className="page">
-      <View className="logo-container">
-        <Image src={logo} className="logo" />
+      <View className="verify-password-container" style={{marginBottom: "20rpx"}}>
+        <View className="title">验证密码</View>
+        <AtInput
+          name="verifyPassword"
+          type="password"
+          placeholder="请再次输入密码"
+          value={verifyPassword}
+          onInput={e => setVerifyPassword(e.detail.value)}
+        />
       </View>
       <View className="title">性别</View>
       <View className="gender-buttons">
@@ -96,7 +126,7 @@ const PersonInfo: React.FC = () => {
           type='primary'
           size='normal'
           className="btn"
-          onClick={handleRegister} 
+          onClick={handleRegister}
         >
           确定
         </AtButton>

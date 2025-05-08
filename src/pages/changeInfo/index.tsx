@@ -1,23 +1,50 @@
 /* eslint-disable jsx-quotes */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Taro from "@tarojs/taro";
 import { View, Image } from "@tarojs/components";
 import { AtInput, AtButton } from "taro-ui";
 import "./index.scss";
+import { request } from "../../utils/request";
 
 const ChangePage: React.FC = () => {
+  // 新增：用于存储后端原始信息
+  const [originInfo, setOriginInfo] = useState({
+    username: "",
+    motto: "",
+    gender: "",
+    avatar: "",
+    level: 1,
+    taps: [],
+  });
+
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
   const [motto, setMotto] = useState("");
-  const [background, setBackground] = useState("");
+  const [gender, setGender] = useState("");
+  const [level, setLevel] = useState(1);
   const [tags, setTags] = useState<string[]>([]);
-  const [inputTag, setInputTag] = useState(""); // 新的单一输入值
+  const [inputTag, setInputTag] = useState("");
 
-  // 在 handleChange 中更新 inputTag
+  // 页面加载时获取用户信息
+  useEffect(() => {
+    request({
+      url: "/user/getInfo",
+      method: "GET",
+    }).then((data) => {
+      setOriginInfo(data);
+      setUsername("");
+      setMotto("");
+      setGender("");
+      setAvatar("");
+      setLevel(data.level || 1);
+      setTags(Array.isArray(data.taps) ? data.taps : []);
+    });
+  }, []);
+
   const handleChange = (name: string) => (value: string) => {
     switch (name) {
       case "addTag":
-        setInputTag(value); // 更新单一的输入值
+        setInputTag(value);
         break;
       case "username":
         setUsername(value);
@@ -26,23 +53,20 @@ const ChangePage: React.FC = () => {
         setMotto(value);
         break;
       case "deleteTag":
-        setTags((prevTags) => prevTags.filter((t) => t !== value)); // 删除标签
+        setTags((prevTags) => prevTags.filter((t) => t !== value));
         break;
     }
   };
 
-  // 选择图片
   const handleChooseImage = (type: "avatar" | "background") => {
     Taro.chooseImage({
-      count: 1, // 只选一张
-      sizeType: ["original", "compressed"], // 允许原图或压缩图
-      sourceType: ["album", "camera"], // 允许从相册选择或拍照
+      count: 1,
+      sizeType: ["original", "compressed"],
+      sourceType: ["album", "camera"],
       success: (res) => {
-        const tempFilePath = res.tempFilePaths[0]; // 获取图片路径
+        const tempFilePath = res.tempFilePaths[0];
         if (type === "avatar") {
           setAvatar(tempFilePath);
-        } else if (type === "background") {
-          setBackground(tempFilePath);
         }
       },
       fail: (err) => {
@@ -51,64 +75,64 @@ const ChangePage: React.FC = () => {
     });
   };
 
-  const uploadFile = async (filePath: string, fileType: string) => {
-    return new Promise((resolve, reject) => {
-      Taro.uploadFile({
-        url: "https://your-api-endpoint.com/api/upload", // 你的文件上传接口
-        filePath,
-        name: "file", // 后端接收字段
-        formData: { type: fileType }, // 额外参数
-        success: (res) => {
-          const data = JSON.parse(res.data);
-          if (data.url) {
-            resolve(data.url); // 返回图片地址
-          } else {
-            reject("上传失败");
-          }
-        },
-        fail: (err) => reject(err),
+  const uploadFile = async (filePath: string, fileType: string): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        Taro.uploadFile({
+          url: "https://your-api-endpoint.com/api/upload",
+          filePath,
+          name: "file",
+          formData: { type: fileType },
+          success: (res) => {
+            const data = JSON.parse(res.data);
+            if (data.url) {
+              resolve(data.url);
+            } else {
+              reject("上传失败");
+            }
+          },
+          fail: (err) => reject(err),
+        });
       });
-    });
-  };
+    };
 
-  // 提交时先上传图片
   const handleSubmit = async () => {
-    try {
-      const avatarUrl = avatar ? await uploadFile(avatar, "avatar") : "";
-      const backgroundUrl = background
-        ? await uploadFile(background, "background")
-        : "";
-
-      const postData = {
-        username,
-        avatar: avatarUrl,
-        motto,
-        background: backgroundUrl,
-        tags,
-      };
-
-      // 发送数据到后端
-      Taro.request({
-        url: "https://your-api-endpoint.com/api/user/update",
-        method: "POST",
-        data: postData,
-        header: { "Content-Type": "application/json" },
-        success: (res) => {
-          if (res.statusCode === 200) {
-            Taro.showToast({ title: "提交成功", icon: "success" });
-          } else {
-            Taro.showToast({ title: "提交失败", icon: "none" });
-          }
-        },
-        fail: (err) => {
-          console.error("提交失败", err);
-          Taro.showToast({ title: "网络错误", icon: "none" });
-        },
-      });
-    } catch (error) {
-      console.error("上传文件失败", error);
-      Taro.showToast({ title: "图片上传失败", icon: "none" });
+    let avatarUrl = avatar;
+    if (avatar && !avatar.startsWith("http")) {
+      try {
+        avatarUrl = await uploadFile(avatar, "avatar");
+      } catch (error) {
+        Taro.showToast({ title: "图片上传失败", icon: "none" });
+        return;
+      }
+    } else if (!avatar) {
+      avatarUrl = originInfo.avatar;
     }
+
+    const postData = {
+      username: username || originInfo.username,
+      motto: motto || originInfo.motto,
+      gender: gender || originInfo.gender,
+      avatar: avatarUrl,
+      level: level,
+      taps: tags,
+    };
+
+    request({
+      url: "/user/update",
+      method: "PUT",
+      data: postData,
+      header: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        if (res && res.success) {
+          Taro.showToast({ title: "提交成功", icon: "success" });
+        } else {
+          Taro.showToast({ title: "提交失败", icon: "none" });
+        }
+      })
+      .catch(() => {
+        Taro.showToast({ title: "网络错误", icon: "none" });
+      });
   };
 
   return (
@@ -119,9 +143,9 @@ const ChangePage: React.FC = () => {
             name="username"
             title="用户名"
             type="text"
-            placeholder="请输入用户名"
+            placeholder={originInfo.username||"请输入用户名"}
             value={username}
-            onChange={handleChange("username")}
+            onChange={(v) => setUsername(v as string)}
           />
         </View>
         <View className="submit-item">
@@ -129,9 +153,9 @@ const ChangePage: React.FC = () => {
             name="motto"
             title="个性签名"
             type="text"
-            placeholder="请输入个性签名"
+            placeholder={originInfo.motto||"请输入个性签名"}
             value={motto}
-            onChange={handleChange("motto")}
+            onChange={(v) => setMotto(v as string)}
           />
         </View>
         <View className="submit-item">
@@ -156,9 +180,9 @@ const ChangePage: React.FC = () => {
         </View>
         <View className="submit-item">
           <View style={{ margin: "20rpx 5% 40rpx 5%" }}>头像</View>
-          {avatar ? (
+          {avatar || originInfo.avatar ? (
             <Image
-              src={avatar}
+              src={avatar || originInfo.avatar}
               className="avatar"
               onClick={() => handleChooseImage("avatar")}
             />
@@ -173,33 +197,14 @@ const ChangePage: React.FC = () => {
             </AtButton>
           )}
         </View>
-        <View className="submit-item">
-          <View style={{ margin: "20rpx 5% 40rpx 5%" }}>背景图片</View>
-          {background ? (
-            <Image
-              src={background}
-              className="background"
-              onClick={() => handleChooseImage("background")}
-            />
-          ) : (
-            <AtButton
-              type="primary"
-              size="normal"
-              className="choosePicture"
-              onClick={() => handleChooseImage("background")}
-            >
-              选择背景
-            </AtButton>
-          )}
-        </View>
         <View
           style={{
             position: "absolute",
             bottom: "0",
             left: "5%",
             right: "5%",
-            marginTop: "300rpx", // 保证元素不会被遮挡
-            marginBottom: "80rpx", // 留下适当的底部空间
+            marginTop: "300rpx",
+            marginBottom: "80rpx",
           }}
         >
           <AtButton

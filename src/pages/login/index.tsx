@@ -10,7 +10,6 @@ import { request } from "../../utils/request";
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   // 登录
   const handleLogin = () => {
@@ -53,7 +52,9 @@ const LoginPage: React.FC = () => {
     }
     // 用户名和密码都填写后跳转并传参
     Taro.navigateTo({
-      url: `/pages/personInfo/index?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+      url: `/pages/personInfo/index?username=${encodeURIComponent(
+        username
+      )}&password=${encodeURIComponent(password)}`,
     });
   };
 
@@ -86,29 +87,11 @@ const LoginPage: React.FC = () => {
             className="custom-input"
             name="password"
             title="密码："
-            type={showPassword ? "text" : "password"}
+            type="password"
             placeholder="请输入密码"
             value={password}
             onChange={(value) => setPassword(value as string)}
-          >
-            {/* 密码可视化按钮，点击按住显示密码 */}
-            <View
-              style={{
-                padding: "0 20rpx",
-                color: "#999",
-                fontSize: "32rpx",
-                display: "flex",
-                alignItems: "center",
-                height: "100%",
-                cursor: "pointer"
-              }}
-              onTouchStart={() => setShowPassword(true)}
-              onTouchEnd={() => setShowPassword(false)}
-              onTouchCancel={() => setShowPassword(false)}
-            >
-              <AtIcon value={showPassword ? "eye" : "eye-off"} size="20" color="black" />
-            </View>
-          </AtInput>
+          />
           <View className="button-container">
             <AtButton
               type="primary"
