@@ -1,5 +1,6 @@
 .page {
   background-color: #f5f5f5;
+  overflow-x: hidden; // 禁止横向滚动
 }
 
 .header {
@@ -68,8 +69,10 @@
     height: 15%;
     width: 100%;
     display: flex;
+    flex-direction: row;
+    align-items: center;
     flex-wrap: 1;
-    padding: 10rpx 30rpx;
+    padding: 30rpx 40rpx;
 
     .item {
       display: flex;
@@ -80,10 +83,11 @@
   }
 
   .down {
-    height: 40%;
+    height: 30%;
     width: 100%;
     display: flex;
     flex-direction: row;
+    padding: 0 0rpx 30rpx 20rpx;
 
     .down-item {
       width: 20%;

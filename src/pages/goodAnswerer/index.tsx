@@ -1,7 +1,7 @@
 /* eslint-disable jsx-quotes */
 import React, { useState } from "react";
 import { View, Text, ScrollView, Input, Button } from "@tarojs/components";
-import { AtAvatar, AtTag, AtIcon } from "taro-ui";
+import { AtAvatar, AtTag } from "taro-ui";
 import Taro from "@tarojs/taro";
 import avatar from "../../assets/头像.jpeg";
 import "./index.scss";
@@ -21,8 +21,6 @@ const AnswererCard = ({ url, title, label }) => {
 };
 
 const Answer = () => {
-  const [inputValue, setInputValue] = useState("");
-
 
   return (
     <View className="answer">
@@ -79,26 +77,57 @@ const GoodAnswerer: React.FC = () => {
   ];
 
   return (
-    <View className="page">
-      <View className="title">排名</View>
-      <ScrollView scrollX className="scroll-container">
-        <View className="scroll-content">
-          {Cards.map((card, index) => (
-            <AnswererCard
-              key={index}
-              url={card.url}
-              title={card.title}
-              label={card.label}
-            />
-          ))}
+    <>
+      <View className="page" style={{ paddingBottom: "70px" }}>
+        <View className="title">排名</View>
+        <ScrollView scrollX className="scroll-container">
+          <View className="scroll-content">
+            {Cards.map((card, index) => (
+              <AnswererCard
+                key={index}
+                url={card.url}
+                title={card.title}
+                label={card.label}
+              />
+            ))}
+          </View>
+        </ScrollView>
+        <View className="answerlist">
+          <View className="title">热门话题</View>
+          <Answer />
+          <Answer />
+          <Answer />
+          <Answer />
+          <Answer />
+          <Answer />
         </View>
-      </ScrollView>
-      <View className="answerlist">
-        <View className="title">热门话题</View>
-        <Answer />
-        <Answer />
       </View>
-    </View>
+      {/* 固定底部按钮，始终可见 */}
+      <View
+        className="fixed-bottom-btn"
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: "100vw",
+          background: "#fff",
+          zIndex: 9999,
+          padding: "10px 16px 20px 16px",
+          boxSizing: "border-box",
+          boxShadow: "0 -2px 8px rgba(0,0,0,0.04)",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Button
+          type="primary"
+          onClick={() => Taro.navigateTo({ url: "/pages/askQuestion/index" })}
+        >
+          发送问题
+        </Button>
+      </View>
+    </>
   );
 };
 

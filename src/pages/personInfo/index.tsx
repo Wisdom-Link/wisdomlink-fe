@@ -1,7 +1,7 @@
 /* eslint-disable jsx-quotes */
 import { useState, useCallback, useEffect } from "react";
 import Taro, { getCurrentInstance } from "@tarojs/taro"; // 新增 getCurrentInstance
-import { View, Picker, Button, Input } from "@tarojs/components"; // 新增 Input
+import { View, Picker, Button } from "@tarojs/components"; // 新增 Input
 import { AtList, AtListItem, AtButton, AtInput } from "taro-ui";
 import "./index.scss";
 import { request } from "../../utils/request";

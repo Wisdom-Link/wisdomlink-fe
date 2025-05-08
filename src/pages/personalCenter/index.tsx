@@ -7,26 +7,38 @@ import Card from "../../components/Card";
 import avatarDefault from "../../assets/头像.jpeg";
 import test from "../../assets/风景图.jpg";
 import "./index.scss";
-import { request } from "../../utils/request";
+
+const mockUserInfo = {
+  username: "小明",
+  motto: "热爱生活，乐于助人",
+  gender: "male",
+  taps: ["考研", "算法", "英语"],
+  avatar: "",
+  level: 2,
+};
 
 const PersonalCenter: React.FC = () => {
-  const [userInfo, setUserInfo] = useState({
-    username: "",
-    motto: "",
-    gender: "",
-    taps: [],
-    avatar: "",
-  });
+  // 用模拟数据
+  const [userInfo, setUserInfo] = useState<{
+      username: string;
+      motto: string;
+      gender: string;
+      taps: string[];
+      avatar: string;
+      level: number;
+    }>({
+      username: "",
+      motto: "",
+      gender: "",
+      taps: [],
+      avatar: "",
+      level: 1,
+    });
   const [stars, setStars] = useState(0);
 
   useEffect(() => {
-    request({
-      url: "/user/getInfo",
-      method: "GET",
-    }).then((data) => {
-      setUserInfo(data);
-      setStars(data.level || 0);
-    });
+    setUserInfo(mockUserInfo);
+    setStars(mockUserInfo.level || 0);
   }, []);
 
   const history = [
@@ -49,7 +61,7 @@ const PersonalCenter: React.FC = () => {
   // 跳转到管理现有帖子
   const goToPosts = () => {
     Taro.navigateTo({
-      url: "/pages/allPosts/index",
+      url: "/pages/changePosts/index",
     });
   };
 
@@ -96,23 +108,11 @@ const PersonalCenter: React.FC = () => {
                 </View>
               ))
             ) : (
-              <>
                 <View className="item">
                   <AtTag size="small" type="primary" circle>
-                    woaini
+                    暂无标签捏
                   </AtTag>
                 </View>
-                <View className="item">
-                  <AtTag size="small" type="primary" circle>
-                    woaini
-                  </AtTag>
-                </View>
-                <View className="item">
-                  <AtTag size="small" type="primary" circle>
-                    woaini
-                  </AtTag>
-                </View>
-              </>
             )}
           </View>
           <View className="down">
@@ -140,9 +140,9 @@ const PersonalCenter: React.FC = () => {
       </View>
       <View>
         <View className="title">
-          <Text>现有帖子</Text>
+          <Text>现有问题</Text>
           <AtButton size="small" type="primary" circle onClick={goToPosts}>
-            查看现有帖子
+            管理现有问题
           </AtButton>
         </View>
         <View className="cardList gradient-list">

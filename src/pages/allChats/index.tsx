@@ -38,7 +38,7 @@ const mockChatListAnswer = [
 
 const tabList = [{ title: "提问对话" }, { title: "答题对话" }];
 
-const ChatList: React.FC = () => {
+const ChatHistory: React.FC = () => {
   const [current, setCurrent] = useState(0);
 
   // 根据标签页切换数据
@@ -106,7 +106,7 @@ const ChatList: React.FC = () => {
                   })
                 }
               >
-                进入对话
+                查看对话
               </Button>
             </View>
           </View>
@@ -116,4 +116,4 @@ const ChatList: React.FC = () => {
   );
 };
 
-export default ChatList;
+export default ChatHistory;

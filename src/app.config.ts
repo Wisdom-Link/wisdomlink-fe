@@ -1,7 +1,9 @@
 export default defineAppConfig({
   pages: [
-    'pages/chatList/index',
     'pages/personalCenter/index',
+    'pages/chatList/index',
+    'pages/allChats/index',
+    'pages/changePosts/index',
     'pages/login/index',
     'pages/goodAnswerer/index',
     'pages/index/index',
@@ -13,7 +15,7 @@ export default defineAppConfig({
   tabBar: {
     list: [
       { pagePath: 'pages/index/index', text: '主页' },
-      { pagePath: 'pages/chat/index', text: '对话' },
+      { pagePath: 'pages/chatList/index', text: '对话' },
       { pagePath: 'pages/community/index', text: '社区' },
       { pagePath: 'pages/personalCenter/index', text: '我的' }
     ]
