@@ -4,7 +4,7 @@
 }
 
 .header {
-  height: 10rem;
+  height: 9rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -15,7 +15,7 @@
   .card {
     width: 90%;
     height: 90%;
-    background: linear-gradient(to bottom, #48d650, #fffdfd);
+    background: linear-gradient(to bottom, #6190e8, #fffdfd);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,7 +55,7 @@
 
         .card-title {
           font-size: 40rpx;
-          margin: 40rpx 0 20rpx 0;
+          margin: 25rpx 0 20rpx 0;
         }
 
         .text {
@@ -100,7 +100,7 @@
   gap: 20rpx; /* 消息间距 */
 
   .ai {
-    width: 80%;
+    max-width: 80%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap; /* 允许内容换行 */
@@ -113,7 +113,7 @@
   }
 
   .user {
-    width: 80%;
+    max-width: 80%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap; /* 允许内容换行 */
@@ -121,51 +121,62 @@
     margin-left: auto;
     margin-right: 10%;
     border-radius: 16rpx;
-    background-color: #48d650;
+    background-color: hsl(228, 100%, 87%);
     color: rgb(0, 0, 0);
     padding: 15rpx 20rpx;
   }
 }
 
 .input-container {
-  position: fixed; /* 使用 fixed 保持元素固定在底部 */
+  position: fixed;
   display: flex;
-  max-height: none; // 确保没有限制最大高度
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  max-height: none;
   bottom: 0;
   left: 0;
   width: 100vw;
   background-color: #ffffff;
-  padding: 5rpx 10rpx;
-  align-items: center;
-  justify-content: center;
+  padding: 20px 20px 50px 0px;
   border-top: 1rpx solid #ddd;
+  z-index: 9999;
 }
 
 /* 输入框样式 */
 .input-box {
-  width: 90%;
-  padding:10rpx;
+  flex: 1;
+  margin-right: 16rpx;
+  padding: 0 20rpx; // 只设置左右padding，去掉上下padding
   border: 1rpx solid #ccc;
   border-radius: 20rpx;
+  background: #fff;
+  font-size: 28rpx;
+  min-width: 0;
   outline: none;
-  transition: height 0.3s ease-in-out; /* 添加高度变化的过渡动画 */
+  box-sizing: border-box;
+  height: 60rpx; // 设置固定高度
+  line-height: 60rpx; // 让内容和placeholder垂直居中
+  text-align: left; // 保持左对齐
 }
 
 .input-box:focus {
-  height:100rpx;
+  border: 1rpx solid #7a9de0;
+  outline: none;
 }
-
 
 /* 发送按钮 */
 .send-button {
-  position: absolute;
-  right: 49rpx;  // 靠右
-  bottom: 5rpx;  // 靠底部
-  padding: 5rpx 20rpx;
-  background-color: #48d650;
+  position: static;
+  margin-left: 0;
+  min-width: 90rpx;
+  height: 60rpx;
+  padding: 0 20rpx;
+  background-color: #7a9de0;
   color: white;
   border: none;
   font-size: 24rpx;
   border-radius: 24rpx;
   cursor: pointer;
+  flex-shrink: 0;
 }

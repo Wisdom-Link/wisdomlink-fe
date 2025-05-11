@@ -1,62 +1,84 @@
 .card {
   width: 90%;
-  height: 150px;
-  border: 1px solid black;
-  background-color:rgb(221, 220, 220);
+  min-height: 140px;
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  border-radius: 36rpx;
-  box-shadow: 4rpx 4rpx rgba(0, 0, 0, 0.1);
-  margin-bottom: 20rpx;
+  align-items: center;
+  margin: 12rpx;
+  padding: 18px 20px;
+  border: none;
 
   .picture {
-    width: 25%;
-    height: 100%;
+    width: 33.33%;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    .card-icon{
-      width: 100%;
-      height: 100%;
+
+    .card-icon {
+      width: 140rpx;
+      height: 140rpx;
+      object-fit: cover;
+      border-radius: 50%;
+      background: #f5f5f5;
     }
   }
 
   .contents {
-    width: 35%;
-    height: 100%;
+    width: 33.33%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    padding: 0 12px;
 
     .card-title {
-      font-size: 32rpx;
+      font-size: 32px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
     }
 
     .text {
-      font-size: 24rpx;
+      font-size: 24px;
+      color: #666;
+      line-height: 1.6;
+      word-break: break-all;
+      white-space: pre-line;
+      width: 100%;
     }
   }
 
   .container-btn {
+    flex: 1 1 0;
+    width: 33.33%;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    width: 40%;
-    height: 100%;
+    justify-content: flex-end;
+    padding-left: 12px;
 
     .question-btn {
-      background-color: #051b32;
-      color: white;
-      display: flex;
+      background: linear-gradient(90deg, #6190e8 0%, #a7bfe8 100%);
+      color: #fff;
       border: none;
-      border-radius: 36rpx;
-      padding: 12rpx 50rpx;
-      font-size: 24rpx;
+      border-radius: 24px;
+      padding: 12px 30px;
+      font-size: 24px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(97,144,232,0.12);
+      transition: background 0.2s;
       cursor: pointer;
+
+      &:active {
+        background: linear-gradient(90deg, #4a6fa5 0%, #7a99c9 100%);
+      }
     }
   }
-
 }

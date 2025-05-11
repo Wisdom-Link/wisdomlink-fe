@@ -59,6 +59,7 @@ const Answer = () => {
         <AtTag circle>保研</AtTag>
         <AtTag circle>保研</AtTag>
       </View>
+      <View className="answer-divider" />
     </View>
   );
 };
@@ -79,7 +80,7 @@ const GoodAnswerer: React.FC = () => {
   const [formText, setFormText] = useState("");
   const [formTag, setFormTag] = useState("");
   // 可选标签示例
-  const tags = ["保研", "考研", "出国", "就业"];
+  const tags = ["法律", "健身", "旅游", "医疗", "音乐", "教育", "影视", "游戏", "烹饪"];
 
   const handleSend = () => {
     // 这里可以处理表单提交逻辑

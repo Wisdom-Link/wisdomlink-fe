@@ -1,23 +1,39 @@
 export default defineAppConfig({
   pages: [
+    'pages/login/index',
+    'pages/personInfo/index',
+    'pages/index/index',
     'pages/goodAnswerer/index',
     'pages/personalCenter/index',
     'pages/chatList/index',
     'pages/allChats/index',
     'pages/changePosts/index',
-    'pages/login/index',
-    'pages/index/index',
-    'pages/personInfo/index',
     'pages/changeInfo/index',
     'pages/chat/index',
     'pages/community/index'
   ],
   tabBar: {
     list: [
-      { pagePath: 'pages/index/index', text: '主页' },
-      { pagePath: 'pages/chatList/index', text: '对话' },
-      { pagePath: 'pages/community/index', text: '社区' },
-      { pagePath: 'pages/personalCenter/index', text: '我的' }
+      {
+        pagePath: 'pages/index/index',
+        text: '主页',
+        iconPath: 'assets/tabbar/首页.png',
+      },
+      {
+        pagePath: 'pages/chatList/index',
+        text: '对话',
+        iconPath: 'assets/tabbar/对话.png',
+      },
+      {
+        pagePath: 'pages/community/index',
+        text: '社区',
+        iconPath: 'assets/tabbar/社区.png',
+      },
+      {
+        pagePath: 'pages/personalCenter/index',
+        text: '我的',
+        iconPath: 'assets/tabbar/个人中心.png',
+      }
     ]
   },
   window: {

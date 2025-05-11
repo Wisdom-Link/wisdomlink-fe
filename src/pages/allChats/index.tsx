@@ -56,26 +56,14 @@ const ChatHistory: React.FC = () => {
           <View key={item.id} className="chat-card">
             {/* 左侧背景图片 */}
             <View
+              className="chat-card-bg"
               style={{
-                width: "33.33%",
-                height: "180rpx",
                 background: `url(${item.background}) center/cover no-repeat`,
               }}
             />
             {/* 中间标题和标签 */}
             <View className="chat-content">
-              <View
-                className="item-title"
-                style={{
-                  fontSize: "32rpx",
-                  fontWeight: "bold",
-                  color: "#222",
-                  marginBottom: "18rpx",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
+              <View className="item-title">
                 {item.title}
               </View>
               <View className="tags-container">
@@ -89,17 +77,7 @@ const ChatHistory: React.FC = () => {
             {/* 右侧按钮 */}
             <View className="button-container">
               <Button
-                size="default"
-                style={{
-                  background: "#6190e8",
-                  color: "#fff",
-                  borderRadius: "30rpx",
-                  fontSize: "24rpx",
-                  padding: "0 10rpx",
-                  height: "56rpx",
-                  lineHeight: "56rpx",
-                  border: "none",
-                }}
+                className="chat-view-btn"
                 onClick={() =>
                   Taro.navigateTo({
                     url: `/pages/chat/index?chatId=${item.id}`,

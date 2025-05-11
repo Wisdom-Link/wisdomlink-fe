@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '高分解答员'
+  navigationBarTitleText: '问题汇总'
 })

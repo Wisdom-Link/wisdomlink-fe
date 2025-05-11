@@ -181,15 +181,22 @@
     gap: 10rpx;
   }
 
-.follow-btn {
-  padding: 3rpx 20rpx;
-  font-size: 30rpx;
-  border-radius: 36rpx;
-  border: none;
-  background-color: #07a81f;
-  color: #ffffff;
-}
+  .answer-divider {
+    width: 100%;
+    height: 1px;
+    background: #eee;
+    margin: 36px 0 0 0;
+    opacity: 0.7;
+  }
 
+  .follow-btn {
+    padding: 3rpx 20rpx;
+    font-size: 30rpx;
+    border-radius: 36rpx;
+    border: none;
+    background-color: #6190e8;
+    color: #ffffff;
+  }
 }
 
 .fixed-bottom-btn {
@@ -207,12 +214,13 @@
   justify-content: center;
 }
 
-.fixed-btn{
+.fixed-btn {
   width: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 30rpx;
+  background: linear-gradient(90deg, #6190e8, #a1c4fd); /* 添加渐变背景 */
   color: #ffffff;
   font-size: 30rpx;
 }

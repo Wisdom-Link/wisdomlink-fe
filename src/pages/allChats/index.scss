@@ -21,6 +21,15 @@
     min-height: 180rpx;
     padding: 0;
     overflow: hidden;
+
+    .chat-card-bg {
+      width: 33.33%;
+      height: 180rpx;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      flex-shrink: 0;
+    }
   }
 
   .chat-content {
@@ -63,5 +72,16 @@
       justify-content: center;
       height: 100%;
     }
+  }
+
+  .chat-view-btn {
+    background: #6190e8;
+    color: #fff;
+    border-radius: 30rpx;
+    font-size: 24rpx;
+    padding: 0 10rpx;
+    height: 56rpx;
+    line-height: 56rpx;
+    border: none;
   }
 }

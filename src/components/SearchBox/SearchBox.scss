@@ -1,20 +1,25 @@
 .search-box {
   display: flex;
   align-items: center;
-  background-color: #ffffff;
-  border-radius: 36rpx;
-  border: #020d1b solid 3rpx;
-  padding: 0rpx 0rpx 0rpx 12rpx ;
-  width: 80%;
-  box-shadow: 4rpx 4rpx rgba(0, 0, 0, 0.1);
+  background: #ffffff; // 蓝白配色
+  border-radius: 28px;
+  padding: 0 18rpx;
+  width: 100%;
+  min-height: 72rpx;
+  height: 72rpx;
+  box-shadow: 0 12px 36px rgba(97,144,232,0.22), 0 4px 16px rgba(97,144,232,0.18);
+  transition: box-shadow 0.2s;
 }
 
 .search-input {
   flex: 1;
   border: none;
-  background: transparent;
-  font-size: 26rpx;
+  background: #fff;
+  font-size: 30rpx;
   outline: none;
+  border-radius: 20px;
+  height: 56rpx;
+  padding-left: 16rpx;
 }
 
 .clear-btn {
@@ -22,9 +27,9 @@
   border: none;
   color: #aaa;
   padding: 10rpx;
-  font-size: 20rpx;
+  font-size: 22rpx;
   cursor: pointer;
-  margin: 0 8rpx;
+  margin: 0 10rpx;
 }
 
 .clear-btn:hover {
@@ -32,15 +37,22 @@
 }
 
 .search-btn {
-  background-color: #051b32;
-  color: white;
+  background-color: #6190e8;
+  color: #fff;
   border: none;
-  border-radius: 36rpx;
-  padding: 12rpx 20rpx;
-  font-size: 24rpx;
+  border-radius: 20px;
+  font-size: 28rpx;
+  height: 56rpx;
+  margin-left: 12rpx;
   cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 8px 32px rgba(97,144,232,0.18), 0 2px 8px rgba(97,144,232,0.13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 36rpx;
 }
 
 .search-btn:hover {
-  background-color: #020d1b;
+  background-color: #3a6ee8;
 }
