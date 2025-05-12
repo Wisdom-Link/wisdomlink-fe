@@ -1,6 +1,6 @@
 /* eslint-disable jsx-quotes */
 import React, { useState } from "react";
-import { View, Text, ScrollView, Input, Button } from "@tarojs/components";
+import { View, Text, ScrollView, Button } from "@tarojs/components";
 import { AtAvatar, AtTag, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtInput } from "taro-ui";
 import Taro from "@tarojs/taro";
 import avatar from "../../assets/头像.jpeg";
@@ -20,49 +20,65 @@ const AnswererCard = ({ url, title, label }) => {
   );
 };
 
-const Answer = () => {
-  return (
-    <View className="answer">
-      <View className="answer-header">
-        <View className="answer-avatar">
-          <AtAvatar circle size="small" image={avatar}></AtAvatar>
+// 新的帖子数据结构
+const posts = [
+  {
+    avatar: avatar,
+    name: "小明同学",
+    time: "2024-06-01 09:20",
+    location: "湖北省武汉市",
+    content:
+      "请问考研英语作文怎么高效准备？有没有推荐的资料和练习方法？",
+    tags: ["考试", "考研", "英语"],
+  },
+  {
+    avatar: avatar,
+    name: "健身达人",
+    time: "2024-05-28 18:45",
+    location: "广东省深圳市",
+    content:
+      "最近想增肌，有没有适合新手的健身计划和饮食建议？",
+    tags: ["健身", "增肌", "健康"],
+  },
+  {
+    avatar: avatar,
+    name: "旅行小熊",
+    time: "2024-05-20 14:10",
+    location: "四川省成都市",
+    content:
+      "端午节想去九寨沟旅游，有什么注意事项或者路线推荐吗？",
+    tags: ["旅游", "九寨沟", "攻略"],
+  },
+];
+
+// 帖子卡片组件
+const PostCard = ({ avatarUrl, name, time, location, content, tags }) => (
+  <View className="post-card">
+    <View className="post-header">
+      <AtAvatar circle size="small" image={avatarUrl} />
+      <View className="post-header-info">
+        <View className="post-header-row">
+          <Text className="post-name">{name}</Text>
+          <Text className="post-time">{time}</Text>
         </View>
-        <View className="answer-text">
-          <View className="answer-name">
-            <Text>刘思</Text>
-          </View>
-          <View className="answer-time">
-            <Text>湖北省</Text>
-            <View style={{ width: 6 }} />
-            <Text>一个小时前</Text>
-          </View>
-        </View>
-        <View className="answer-more">
-          <Button
-            className="follow-btn"
-            onClick={() => Taro.navigateTo({ url: "/pages/chat/index" })}
-          >
-            回答问题
-          </Button>
-        </View>
+        <Text className="post-location">{location}</Text>
       </View>
-      <View className="answer-content">
-        <View className="answer-title">关于保研问题</View>
-        <View className="answer-label">
-          1.了解导师研究方向，展现兴趣方向。2.成绩优良，科研经历丰富。3.提前准备申请材料，准确无误填写表格
-        </View>
-      </View>
-      <View
-        className="answer-tag"
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <AtTag circle>保研</AtTag>
-        <AtTag circle>保研</AtTag>
-      </View>
-      <View className="answer-divider" />
     </View>
-  );
-};
+    <View className="post-content">{content}</View>
+    <View className="post-tags">
+      {tags.map(tag => (
+        <AtTag key={tag} circle className="post-tag">{tag}</AtTag>
+      ))}
+    </View>
+    <Button
+      className="post-btn"
+      type="primary"
+      onClick={() => Taro.navigateTo({ url: "/pages/chat/index" })}
+    >
+      <Text className="post-btn-icon">💬</Text> 回答问题
+    </Button>
+  </View>
+);
 
 const GoodAnswerer: React.FC = () => {
   const Cards = [
@@ -107,27 +123,17 @@ const GoodAnswerer: React.FC = () => {
             ))}
           </View>
         </ScrollView>
-        <View className="answerlist">
-          <View className="title">热门话题</View>
-          <Answer />
-          <Answer />
-          <Answer />
-          <Answer />
-          <Answer />
-          <Answer />
+        <View className="title">问题</View>
+        <View className="post-list">
+          {posts.map((post, idx) => (
+            <PostCard key={idx} avatarUrl={post.avatar} name={post.name} time={post.time} location={post.location} content={post.content} tags={post.tags} />
+          ))}
         </View>
       </View>
       {/* 弹窗表单 */}
       <AtModal isOpened={showModal} onClose={() => setShowModal(false)}>
         <AtModalHeader>发送问题</AtModalHeader>
         <AtModalContent>
-          <AtInput
-            name="title"
-            title="标题"
-            placeholder="请输入标题"
-            value={formTitle}
-            onChange={v => setFormTitle(v as string)}
-          />
           <AtInput
             name="text"
             title="内容"

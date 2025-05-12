@@ -1,7 +1,15 @@
 /* eslint-disable jsx-quotes */
 import React, { useState } from "react";
 import { View, Text, Button } from "@tarojs/components";
-import { AtAvatar, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtTag, AtInput } from "taro-ui";
+import {
+  AtAvatar,
+  AtModal,
+  AtModalHeader,
+  AtModalContent,
+  AtModalAction,
+  AtTag,
+  AtInput,
+} from "taro-ui";
 import Taro from "@tarojs/taro";
 import avatar from "../../assets/头像.jpeg";
 import "./index.scss";
@@ -16,58 +24,53 @@ const PostCard: React.FC<{
   label: string;
   tags: string[];
 }> = ({ url, name, location, time, title, label, tags }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [formTitle, setFormTitle] = useState("");
+  const [formText, setFormText] = useState("");
+  const [formTag, setFormTag] = useState("");
+  const tags_able = [
+    "法律",
+    "健身",
+    "旅游",
+    "医疗",
+    "音乐",
+    "教育",
+    "影视",
+    "游戏",
+    "烹饪",
+  ];
 
-   const [showModal, setShowModal] = useState(false);
-    const [formTitle, setFormTitle] = useState("");
-    const [formText, setFormText] = useState("");
-    const [formTag, setFormTag] = useState("");
-    // 可选标签示例
-     const tags_able = ["法律", "健身", "旅游", "医疗", "音乐", "教育", "影视", "游戏", "烹饪"];
-
-    const handleSend = () => {
-    // 这里可以处理表单提交逻辑
+  const handleSend = () => {
     setShowModal(false);
     setFormTitle("");
     setFormText("");
     setFormTag("");
-    // Taro.showToast({ title: "已提交", icon: "success" });
   };
+
   return (
-    <View className="answer">
-      <View className="answer-header">
-        <View className="answer-avatar">
-          <AtAvatar circle size="small" image={url}></AtAvatar>
-        </View>
-        <View className="answer-text">
-          <View className="answer-name">
-            <Text>{name}</Text>
+    <View className="post-card">
+      <View className="post-header">
+        <AtAvatar circle size="small" image={url} />
+        <View className="post-header-info">
+          <View className="post-header-row">
+            <Text className="post-name">{name}</Text>
+            <Text className="post-time">{time}</Text>
           </View>
-          <View className="answer-time">
-            <Text>{location}</Text>
-            <View style={{ width: 6 }} />
-            <Text>{time}</Text>
-          </View>
+          <Text className="post-location">{location}</Text>
         </View>
-        <View className="answer-more">
-          <Button
-            className="follow-btn"
-            onClick={() => setShowModal(true)}
-          >
-            更改问题
-          </Button>
-        </View>
+        <View style={{ marginLeft: "auto" }}></View>
       </View>
-      <View className="answer-content">
-        <View className="answer-title">{title}</View>
-        <View className="answer-label">{label}</View>
-      </View>
-      <View className="answer-tag" style={{ display: "flex", alignItems: "center" }}>
+      <View className="post-content">{label}</View>
+      <View className="post-tags">
         {tags.map((tag, idx) => (
-          <AtTag key={idx} circle>
+          <AtTag key={idx} circle className="post-tag">
             {tag}
           </AtTag>
         ))}
       </View>
+      <Button className="post-btn" onClick={() => setShowModal(true)}>
+          更改问题
+        </Button>
       {/* 弹窗表单 */}
       <AtModal isOpened={showModal} onClose={() => setShowModal(false)}>
         <AtModalHeader>发送问题</AtModalHeader>
@@ -77,7 +80,7 @@ const PostCard: React.FC<{
             title="标题"
             placeholder="请输入标题"
             value={formTitle}
-            onChange={v => setFormTitle(v as string)}
+            onChange={(v) => setFormTitle(v as string)}
           />
           <AtInput
             name="text"
@@ -85,11 +88,18 @@ const PostCard: React.FC<{
             type="text"
             placeholder="请输入问题内容"
             value={formText}
-            onChange={v => setFormText(v as string)}
+            onChange={(v) => setFormText(v as string)}
           />
           <View style={{ margin: "16px 0 0 0" }}>标签</View>
-          <View style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "8px" }}>
-            {tags_able.map(tag => (
+          <View
+            style={{
+              display: "flex",
+              gap: "8px",
+              flexWrap: "wrap",
+              marginTop: "8px",
+            }}
+          >
+            {tags_able.map((tag) => (
               <AtTag
                 key={tag}
                 circle
@@ -112,7 +122,6 @@ const PostCard: React.FC<{
           </Button>
         </AtModalAction>
       </AtModal>
-      <View className="answer-divider" />
     </View>
   );
 };
@@ -124,7 +133,8 @@ const mockPosts = [
     location: "湖北省",
     time: "1小时前",
     title: "关于保研问题",
-    label: "1.了解导师研究方向，展现兴趣方向。2.成绩优良，科研经历丰富。3.提前准备申请材料，准确无误填写表格",
+    label:
+      "1.了解导师研究方向，展现兴趣方向。2.成绩优良，科研经历丰富。3.提前准备申请材料，准确无误填写表格",
     tags: ["保研", "经验"],
   },
   {
@@ -139,11 +149,9 @@ const mockPosts = [
 ];
 
 const CurrentPosts: React.FC = () => {
-
   return (
     <View className="page">
-      <View className="answerlist">
-        <View className="title">我的提问</View>
+      <View className="post-list">
         {mockPosts.map((post, idx) => (
           <PostCard key={idx} {...post} />
         ))}

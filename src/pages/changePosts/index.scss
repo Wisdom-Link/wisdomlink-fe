@@ -13,186 +13,101 @@
   font-size: larger;
 }
 
-.scroll-container {
+.post-list {
   width: 100%;
-  overflow-x: auto; // 允许横向滚动
-  white-space: nowrap; // 禁止换行
-  -webkit-overflow-scrolling: touch; // iOS 兼容
-  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  padding: 24rpx 0 80rpx 0;
+  align-items: center;
 }
 
-.scroll-content {
-  display: flex; // 让 Card 横向排列
-  flex-wrap: nowrap; // 禁止换行
-  gap: 10px; // 让 Card 之间有间距
-  min-width: max-content; // 确保内容不会折行
-  padding: 0 15rpx;
+.post-card {
+  width: 90vw;
+  background: #fff;
+  border-radius: 24rpx;
+  box-shadow: 0 2rpx 16rpx 0 rgba(0,0,0,0.08);
+  padding: 32rpx 28rpx 24rpx 28rpx;
+  margin-bottom: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-.card {
-  width: 300rpx;
-  height: 150rpx;
+.post-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 18rpx;
+}
+
+.post-header-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.post-header-row {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  background-color: whitesmoke;
-  border-radius: 20rpx;
-  margin: 10rpx 15rpx;
-  overflow: hidden;
-  box-shadow: 4rpx 4rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影
-
-  .card-picture {
-    width: 40%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .card-content {
-    width: 50%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 30rpx;
-    color: #ffffff;
-    padding: 5rpx 0;
-
-    .card-title {
-      width: 100%;
-      height: 25rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25rpx;
-      color: #000000;
-    }
-
-    .card-label {
-      width: 100%;
-      height: 25rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25rpx;
-      color: #000000;
-    }
-  }
+  justify-content: space-between; // 让时间靠右
 }
 
-.answer {
+.post-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.post-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.post-location {
+  font-size: 24rpx;
+  color: #6190e8;
+  margin-top: 4rpx;
+}
+
+.post-content {
+  margin: 24rpx 0 0 0;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.7;
+}
+
+.post-tags {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 16rpx;
+  margin: 18rpx 0 0 0;
+}
+
+.post-tag {
+  background: #f2f4f8 !important;
+  color: #6190e8 !important;
+  font-size: 24rpx !important;
+  border: none !important;
+  padding: 0 18rpx !important;
+}
+
+.post-btn {
+  margin-top: 28rpx;
+  width: 100%;
+  border-radius: 16rpx;
+  background-color: #3478f6 !important;
+  color: #fff;
+  font-size: 30rpx;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  margin: 10rpx 0;
-  padding-top: 20rpx;
-  padding-bottom: 20rpx;
-  background-color: #ffffff;
-
-  .answer-header {
-    width: 100%;
-    height: 50rpx;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin: 10rpx 0;
-
-    .answer-avatar {
-      width: 20%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .answer-text {
-      width: 50%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      .answer-name {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        font-size: 28rpx;
-      }
-
-      .answer-time {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        font-size: 24rpx;
-      }
-    }
-
-    .answer-more {
-      width: 30%;
-      height: 100%;
-      display: flex;
-      align-items:center;
-      justify-content: center;
-    }
+  font-weight: 500;
+  box-shadow: 0 2rpx 8rpx 0 rgba(52,120,246,0.08);
+  .post-btn-icon {
+    margin-right: 12rpx;
+    font-size: 32rpx;
   }
-
-  .answer-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 20rpx 0;
-
-    .answer-title {
-      width: 90%;
-      display: flex;
-      font-size: 28rpx;
-      color: #000000;
-      margin: 10rpx 0;
-    }
-
-    .answer-label {
-      width: 90%;
-      display: flex;
-      font-size: 28rpx;
-      border-radius: 30rpx;
-      color: #000000;
-      background-color: #e1c038;
-      padding: 20rpx 20rpx;
-    }
-  }
-
-  .answer-tag {
-    width: 94%;
-    height: 50rpx;
-    display: flex;
-    align-items: center;
-    gap: 10rpx;
-  }
-    .answer-divider {
-    width: 100%;
-    height: 1px;
-    background: #eee;
-    margin: 36px 0 0 0;
-    opacity: 0.7;
-  }
-
-.follow-btn {
-  padding: 3rpx 20rpx;
-  font-size: 30rpx;
-  border-radius: 36rpx;
-  border: none;
-  background-color: #6190e8;
-  color: #ffffff;
-}
 }
