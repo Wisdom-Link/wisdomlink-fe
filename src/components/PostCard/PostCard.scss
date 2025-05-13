@@ -1,0 +1,89 @@
+.post-card {
+  width: 90vw;
+  background: #fff;
+  border-radius: 24rpx;
+  box-shadow: 0 2rpx 16rpx 0 rgba(0,0,0,0.08);
+  padding: 32rpx 28rpx 24rpx 28rpx;
+  margin-bottom: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.post-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 18rpx;
+}
+
+.post-header-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.post-header-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between; // 让时间靠右
+}
+
+.post-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.post-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.post-location {
+  font-size: 24rpx;
+  color: #6190e8;
+  margin-top: 4rpx;
+}
+
+.post-content {
+  margin: 24rpx 0 0 0;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.7;
+}
+
+.post-tags {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+  margin: 18rpx 0 0 0;
+}
+
+.post-tag {
+  background: #f2f4f8 !important;
+  color: #6190e8 !important;
+  font-size: 24rpx !important;
+  border: none !important;
+  padding: 0 18rpx !important;
+}
+
+.post-btn {
+  margin-top: 28rpx;
+  width: 100%;
+  border-radius: 16rpx;
+  background-color: #3478f6 !important;
+  color: #fff;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  box-shadow: 0 2rpx 8rpx 0 rgba(52,120,246,0.08);
+  .post-btn-icon {
+    margin-right: 12rpx;
+    font-size: 32rpx;
+  }
+}

@@ -9,9 +9,9 @@ import test from "../../assets/风景图.jpg";
 import "./index.scss";
 
 const mockUserInfo = {
-  username: "小明",
+  username: "小红同学",
   motto: "热爱生活，乐于助人",
-  gender: "male",
+  gender: "female",
   taps: ["考研", "算法", "英语"],
   avatar: "",
   level: 2,

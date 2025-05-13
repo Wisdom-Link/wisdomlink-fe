@@ -5,11 +5,6 @@ import { View,Image,Swiper, SwiperItem} from "@tarojs/components";
 import { AtIcon } from "taro-ui";
 import  SearchBox  from "../../components/SearchBox";
 import cartoon from "../../assets/头像 女孩.png";
-import logo from "../../assets/手机机器人.png";
-import education from "../../assets/教育.jpg";
-import fitness from "../../assets/健身.jpg";
-import travel from "../../assets/旅游.jpg";
-import headerPicture from "../../assets/头部图片.jpg";
 import "./index.scss";
 import AICard from "../../components/AICard";
 
@@ -19,10 +14,21 @@ const cardList = [
   {id:3, url: cartoon, title: "智能体3号", label: "关于健身的问题都可以问我" },
 ];
 
+const bannerList = [
+  { id: 1, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%95%99%E8%82%B2.jpg", title: "教育" },
+  { id: 2, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E5%81%A5%E8%BA%AB.jpg", title: "健身" },
+  { id: 3, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%97%85%E6%B8%B8.jpg", title: "旅游" },
+  { id: 4, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E9%9F%B3%E4%B9%90.jpg", title: "音乐" },
+  { id: 5, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%B3%95%E5%BE%8B.jpg", title: "法律" },
+  { id: 6, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E5%BD%B1%E8%A7%86.png", title: "影视" },
+  { id: 7, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E5%8C%BB%E7%96%97.jpg", title: "医疗" },
+  { id: 8, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E7%83%B9%E9%A5%AA.jpg", title: "烹饪" },
+  { id: 9, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%B8%B8%E6%88%8F.jpg", title: "游戏" },
+]
+
 const MainPage: React.FC = () => {
   const changeRoute=(id:number)=>{
-    Taro.setStorageSync('chatID',{id});
-    Taro.switchTab({ url: '/pages/chat/index' });
+    Taro.navigateTo({ url: `/pages/chat/index?chatId=${id}` });
   }
 
   return (
@@ -30,7 +36,7 @@ const MainPage: React.FC = () => {
       <View
         className="header"
         style={{
-          backgroundImage: `url(${headerPicture})`,
+          backgroundImage: `url('https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/header/%E5%A4%B4%E9%83%A8%E5%9B%BE%E7%89%87.jpg')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -62,24 +68,14 @@ const MainPage: React.FC = () => {
         indicatorDots
         autoplay
       >
-        <SwiperItem>
-          <View className='demo-text'>
-            <View className="banner-label">教育</View>
-            <Image src={education} mode="aspectFill" style={{ width: "100%", height: "100%" }} />
-          </View>
-        </SwiperItem>
-        <SwiperItem>
-          <View className='demo-text'>
-            <View className="banner-label">健身</View>
-            <Image src={fitness} mode="aspectFill" style={{ width: "100%", height: "100%" }} />
-          </View>
-        </SwiperItem>
-        <SwiperItem>
-          <View className='demo-text'>
-            <View className="banner-label">旅游</View>
-            <Image src={travel} mode="aspectFill" style={{ width: "100%", height: "100%" }} />
-          </View>
-        </SwiperItem>
+        {bannerList.map((item) => (
+          <SwiperItem key={item.id}>
+            <View className='demo-text'>
+              <View className="banner-label">{item.title}</View>
+              <Image src={item.url} mode="aspectFill" style={{ width: "100%", height: "100%" }} />
+            </View>
+          </SwiperItem>
+        ))}
       </Swiper>
       </View>
       <View className="title">

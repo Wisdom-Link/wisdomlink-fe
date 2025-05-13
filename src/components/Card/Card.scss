@@ -1,11 +1,12 @@
 .card-small {
   width: 150rpx;
-  height: 180rpx;
+  height: 200rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
+  overflow: hidden;
   border-radius: 30rpx;
   margin: 10rpx 15rpx;
   box-shadow: 4rpx 4rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影
@@ -18,14 +19,14 @@
     justify-content: center;
 
    .icon-small {
-      width: 90%;
-      height: 90%;
+      width: 100%;
+      height: 100%;
     }
   }
 
  .title-small {
     width: 100%;
-    height: 30rpx;
+    height: 50rpx;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,7 +87,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 75% 20rpx 20rpx 20rpx;
+  padding: 65% 20rpx 20rpx 20rpx;
 
   .title-large {
     width: 100%;
@@ -96,7 +97,7 @@
     justify-content: space-between; // 左右对齐
     font-size: 30rpx;
     color: #ffffff;
-    margin: 20rpx 0;
+    margin: 25rpx 0;
   }
 
   .tag {

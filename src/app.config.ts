@@ -1,9 +1,9 @@
 export default defineAppConfig({
   pages: [
+    'pages/index/index',
     'pages/goodAnswerer/index',
     'pages/login/index',
     'pages/personInfo/index',
-    'pages/index/index',
     'pages/personalCenter/index',
     'pages/chatList/index',
     'pages/allChats/index',

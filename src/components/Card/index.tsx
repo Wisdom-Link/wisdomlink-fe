@@ -1,5 +1,5 @@
 /* eslint-disable jsx-quotes */
-import { View, Image, Text} from "@tarojs/components";
+import { View, Image, Text } from "@tarojs/components";
 import { AtTag } from "taro-ui";
 import "./Card.scss";
 
@@ -8,14 +8,16 @@ interface CardProps {
   url: string;
   title: string;
   label?: string;
-  onClick?: () => void; // 新增点击事件回调
+  tags?: string[]; // 新增tags
+  onClick?: () => void;
 }
 
-const Card:React.FC<CardProps> = ({
+const Card: React.FC<CardProps> = ({
   size,
   url,
   title,
   label = size === "small" ? undefined : "",
+  tags = [],
   onClick
 }) => {
   switch (size) {
@@ -59,9 +61,17 @@ const Card:React.FC<CardProps> = ({
           <View className="contents-large">
             <View className="title-large">
               <Text>{title}</Text>
-              <View className="tag"><AtTag size="small">30人询问</AtTag></View>
             </View>
-            <View className="text-large">{label}</View>
+            <View className="text-large">
+              {tags && tags.length > 0
+                ? tags.map(tag => (
+                    <AtTag key={tag} size="small" style={{ marginRight: "10rpx" }}>
+                      {tag}
+                    </AtTag>
+                  ))
+                : <AtTag size="small">30人询问</AtTag>
+              }
+            </View>
           </View>
         </View>
       );

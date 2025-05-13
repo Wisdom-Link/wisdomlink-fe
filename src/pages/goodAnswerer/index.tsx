@@ -1,10 +1,11 @@
 /* eslint-disable jsx-quotes */
 import React, { useState } from "react";
-import { View, Text, ScrollView, Button } from "@tarojs/components";
+import { View, ScrollView, Button } from "@tarojs/components";
 import { AtAvatar, AtTag, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtInput } from "taro-ui";
 import Taro from "@tarojs/taro";
 import avatar from "../../assets/头像.jpeg";
 import "./index.scss";
+import PostCard from "../../components/PostCard";
 
 const AnswererCard = ({ url, title, label }) => {
   return (
@@ -24,7 +25,7 @@ const AnswererCard = ({ url, title, label }) => {
 const posts = [
   {
     avatar: avatar,
-    name: "小明同学",
+    name: "小红同学",
     time: "2024-06-01 09:20",
     location: "湖北省武汉市",
     content:
@@ -50,35 +51,6 @@ const posts = [
     tags: ["旅游", "九寨沟", "攻略"],
   },
 ];
-
-// 帖子卡片组件
-const PostCard = ({ avatarUrl, name, time, location, content, tags }) => (
-  <View className="post-card">
-    <View className="post-header">
-      <AtAvatar circle size="small" image={avatarUrl} />
-      <View className="post-header-info">
-        <View className="post-header-row">
-          <Text className="post-name">{name}</Text>
-          <Text className="post-time">{time}</Text>
-        </View>
-        <Text className="post-location">{location}</Text>
-      </View>
-    </View>
-    <View className="post-content">{content}</View>
-    <View className="post-tags">
-      {tags.map(tag => (
-        <AtTag key={tag} circle className="post-tag">{tag}</AtTag>
-      ))}
-    </View>
-    <Button
-      className="post-btn"
-      type="primary"
-      onClick={() => Taro.navigateTo({ url: "/pages/chat/index" })}
-    >
-      <Text className="post-btn-icon">💬</Text> 回答问题
-    </Button>
-  </View>
-);
 
 const GoodAnswerer: React.FC = () => {
   const Cards = [
@@ -126,7 +98,15 @@ const GoodAnswerer: React.FC = () => {
         <View className="title">问题</View>
         <View className="post-list">
           {posts.map((post, idx) => (
-            <PostCard key={idx} avatarUrl={post.avatar} name={post.name} time={post.time} location={post.location} content={post.content} tags={post.tags} />
+            <PostCard
+              key={idx}
+              avatarUrl={post.avatar}
+              name={post.name}
+              time={post.time}
+              location={post.location}
+              content={post.content}
+              tags={post.tags}
+            />
           ))}
         </View>
       </View>

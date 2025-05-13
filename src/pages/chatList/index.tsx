@@ -10,29 +10,60 @@ import "./index.scss";
 const mockChatListAsk = [
   {
     id: 1,
-    title: "考研英语答疑",
-    tags: ["考研", "英语"],
-    background: bg1,
+    title: "如何科学安排一周健身计划？",
+    tags: ["健身", "健康"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%81%A5%E8%BA%AB/%E5%81%A5%E8%BA%AB1.jpg",
   },
   {
     id: 2,
-    title: "保研经验分享",
-    tags: ["保研", "经验"],
-    background: bg1,
+    title: "遇到合同纠纷应该怎么办？",
+    tags: ["法律", "咨询"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B1.jpg",
   },
-];
-const mockChatListAnswer = [
   {
     id: 3,
-    title: "算法交流",
-    tags: ["算法", "刷题"],
-    background: bg1,
+    title: "云南旅游有哪些必去景点？",
+    tags: ["旅游", "攻略"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%97%85%E6%B8%B8/%E6%97%85%E6%B8%B82.jpeg",
   },
   {
     id: 4,
-    title: "高数难题解答",
-    tags: ["数学", "高数", "难题"],
-    background: bg1,
+    title: "体检报告异常需要注意什么？",
+    tags: ["医疗", "健康"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%8C%BB%E7%96%97/%E5%8C%BB%E7%96%973.jpg",
+  },
+  {
+    id: 5,
+    title: "零基础如何学习钢琴？",
+    tags: ["音乐", "兴趣"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%901.jpg",
+  },
+];
+
+const mockChatListAnswer = [
+  {
+    id: 6,
+    title: "高考志愿填报有哪些注意事项？",
+    tags: ["教育", "经验"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%95%99%E8%82%B2/%E6%95%99%E8%82%B21.jpg",
+  },
+  {
+    id: 7,
+    title: "最近有哪些值得推荐的国产电影？",
+    tags: ["影视", "娱乐"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%BD%B1%E8%A7%86/%E5%BD%B1%E8%A7%861.jpg",
+  },
+  {
+    id: 8,
+    title: "王者荣耀新赛季上分技巧有哪些？",
+    tags: ["游戏", "交流"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B8%B8%E6%88%8F/%E6%B8%B8%E6%88%8F2.jpg",
+  },
+  {
+    id: 9,
+    title: "家常菜怎么做才更健康？",
+    tags: ["烹饪", "美食"],
+    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E7%83%B9%E9%A5%AA/%E7%83%B9%E9%A5%AA2.jpg",
   },
 ];
 

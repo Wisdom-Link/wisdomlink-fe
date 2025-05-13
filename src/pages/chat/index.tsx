@@ -71,13 +71,6 @@ const ChatPage: React.FC = () => {
                 <View className="text">我是解答员xxx, 很高兴为您服务</View>
               </View>
             </View>
-            <View className="down">
-              <View className="down-text">评价:</View>
-              <Button className="btn">优秀</Button>
-              <Button className="btn">良好</Button>
-              <Button className="btn">及格</Button>
-              <Button className="btn">差劲</Button>
-            </View>
           </View>
         </View>
         {chatData.map((item, index) => (

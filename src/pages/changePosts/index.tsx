@@ -73,7 +73,7 @@ const PostCard: React.FC<{
         </Button>
       {/* 弹窗表单 */}
       <AtModal isOpened={showModal} onClose={() => setShowModal(false)}>
-        <AtModalHeader>发送问题</AtModalHeader>
+        <AtModalHeader>更改问题</AtModalHeader>
         <AtModalContent>
           <AtInput
             name="title"
