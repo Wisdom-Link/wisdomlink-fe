@@ -9,9 +9,9 @@ import "./index.scss";
 import AICard from "../../components/AICard";
 
 const cardList = [
-  {id:1, url: cartoon, title: "智能体1号", label: "关于教育的问题都可以问我" },
-  {id:2, url: cartoon, title: "智能体2号", label: "关于法律的问题都可以问我" },
-  {id:3, url: cartoon, title: "智能体3号", label: "关于健身的问题都可以问我" },
+  {id:1, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/%E5%8D%A1%E7%89%87/%E6%99%BA%E8%83%BD%E4%BD%931.png", title: "智能体1号", label: "关于教育的问题都可以问我" },
+  {id:2, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/%E5%8D%A1%E7%89%87/%E6%99%BA%E8%83%BD%E4%BD%932.png", title: "智能体2号", label: "关于法律的问题都可以问我" },
+  {id:3, url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/%E5%8D%A1%E7%89%87/%E6%99%BA%E8%83%BD%E4%BD%933.png", title: "智能体3号", label: "关于健身的问题都可以问我" },
 ];
 
 const bannerList = [

@@ -1,0 +1,22 @@
+.btn-can-move {
+  width: 120rpx;
+  height: 120rpx;
+  background-color: #6190e8;
+  border-radius: 50%;
+  box-shadow: 0 4rpx 16rpx rgba(97,144,232,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 80rpx;
+  font-weight: bold;
+  position: fixed;
+  user-select: none;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  z-index: 9999;
+  // 可选：按下时加深阴影
+  &:active {
+    box-shadow: 0 8rpx 24rpx rgba(97,144,232,0.28);
+  }
+}

@@ -76,13 +76,6 @@ const PostCard: React.FC<{
         <AtModalHeader>更改问题</AtModalHeader>
         <AtModalContent>
           <AtInput
-            name="title"
-            title="标题"
-            placeholder="请输入标题"
-            value={formTitle}
-            onChange={(v) => setFormTitle(v as string)}
-          />
-          <AtInput
             name="text"
             title="内容"
             type="text"

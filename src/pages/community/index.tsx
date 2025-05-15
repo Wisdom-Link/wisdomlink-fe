@@ -3,35 +3,37 @@ import React, { useState, useEffect } from "react";
 import Taro from "@tarojs/taro";
 import { View, ScrollView } from "@tarojs/components";
 import Card from "../../components/Card";
-/* eslint-disable jsx-quotes */
-import avatar from "../../assets/头像.jpeg";
 import PostCard from "../../components/PostCard";
 import "./index.scss";
 
 // 模拟热门问题数据
+
 const posts = [
   {
-    avatar: avatar,
+    avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%B0%8F%E7%BA%A2%E5%90%8C%E5%AD%A6.jpeg",
     name: "小红同学",
     time: "2024-06-01 09:20",
     location: "湖北省武汉市",
-    content: "请问考研英语作文怎么高效准备？有没有推荐的资料和练习方法？",
+    content:
+      "请问考研英语作文怎么高效准备？有没有推荐的资料和练习方法？",
     tags: ["考试", "考研", "英语"],
   },
   {
-    avatar: avatar,
+    avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%81%A5%E8%BA%AB%E8%BE%BE%E4%BA%BA.jpg",
     name: "健身达人",
     time: "2024-05-28 18:45",
     location: "广东省深圳市",
-    content: "最近想增肌，有没有适合新手的健身计划和饮食建议？",
+    content:
+      "最近想增肌，有没有适合新手的健身计划和饮食建议？",
     tags: ["健身", "增肌", "健康"],
   },
   {
-    avatar: avatar,
+    avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E6%97%85%E8%A1%8C%E5%B0%8F%E7%86%8A.jpg",
     name: "旅行小熊",
     time: "2024-05-20 14:10",
     location: "四川省成都市",
-    content: "端午节想去九寨沟旅游，有什么注意事项或者路线推荐吗？",
+    content:
+      "端午节想去九寨沟旅游，有什么注意事项或者路线推荐吗？",
     tags: ["旅游", "九寨沟", "攻略"],
   },
 ];

@@ -1,5 +1,5 @@
 .page {
-  background-color: #ffffff;
+  background-color: #f5f5f5;
   overflow-x: hidden; // 禁止横向滚动
 }
 
@@ -43,6 +43,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          border-radius: 50%;
         }
       }
 
@@ -56,10 +57,12 @@
         .card-title {
           font-size: 40rpx;
           margin: 25rpx 0 20rpx 0;
+          color:rgb(0, 0, 0)
         }
 
         .text {
           font-size: 30rpx;
+          color:#222;
         }
       }
     }
@@ -106,10 +109,26 @@
     flex-wrap: wrap; /* 允许内容换行 */
     align-items: flex-start; /* 左对齐 */
     margin-right: auto;
-    border-radius: 16rpx;
-    background-color: #e7dfdf;
-    color: rgb(0, 0, 0);
-    padding: 15rpx 20rpx;
+    position: relative;
+    border-radius: 16rpx 16rpx 16rpx 0;
+    background-color: #ffffff;
+    color: #222;
+    padding: 18rpx 26rpx;
+    font-size: 28rpx;
+    box-shadow: 0 6rpx 16rpx 0 rgba(97,144,232,0.12); /* 加重阴影 */
+
+    // QQ气泡左侧小三角
+    &::before {
+      content: "";
+      position: absolute;
+      left: -18rpx;
+      top: 18rpx;
+      width: 0;
+      height: 0;
+      border-top: 16rpx solid transparent;
+      border-bottom: 16rpx solid transparent;
+      border-right: 18rpx solid #ffffff;
+    }
   }
 
   .user {
@@ -120,10 +139,26 @@
     align-items: flex-end; /* 右对齐 */
     margin-left: auto;
     margin-right: 10%;
-    border-radius: 16rpx;
-    background-color: hsl(228, 100%, 87%);
-    color: rgb(0, 0, 0);
-    padding: 15rpx 20rpx;
+    position: relative;
+    border-radius: 16rpx 16rpx 0 16rpx;
+    background-color: rgb(0,153,255);
+    color: #ffffff;
+    padding: 18rpx 26rpx;
+    font-size: 28rpx;
+    box-shadow: 0 2rpx 8rpx 0 rgba(97,144,232,0.08);
+
+    // QQ气泡右侧小三角
+    &::after {
+      content: "";
+      position: absolute;
+      right: -18rpx;
+      top: 18rpx;
+      width: 0;
+      height: 0;
+      border-top: 16rpx solid transparent;
+      border-bottom: 16rpx solid transparent;
+      border-left: 18rpx solid rgb(0,153,255);
+    }
   }
 }
 

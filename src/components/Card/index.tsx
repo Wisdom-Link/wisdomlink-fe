@@ -69,7 +69,7 @@ const Card: React.FC<CardProps> = ({
                       {tag}
                     </AtTag>
                   ))
-                : <AtTag size="small">30人询问</AtTag>
+                : <AtTag size="small">暂无标签捏</AtTag>
               }
             </View>
           </View>

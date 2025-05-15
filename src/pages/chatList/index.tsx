@@ -3,7 +3,6 @@ import { useState } from "react";
 import Taro from "@tarojs/taro";
 import { View, Button, Text } from "@tarojs/components";
 import { AtTabs } from "taro-ui";
-import bg1 from "../../assets/风景图.jpg";
 import "./index.scss";
 
 // 两组模拟数据

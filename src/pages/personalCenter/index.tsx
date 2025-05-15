@@ -5,7 +5,6 @@ import { AtAvatar, AtTag, AtRate, AtButton } from "taro-ui";
 import { View, Text } from "@tarojs/components";
 import Card from "../../components/Card";
 import avatarDefault from "../../assets/头像.jpeg";
-import test from "../../assets/风景图.jpg";
 import "./index.scss";
 
 const mockUserInfo = {
@@ -13,7 +12,7 @@ const mockUserInfo = {
   motto: "热爱生活，乐于助人",
   gender: "female",
   taps: ["考研", "算法", "英语"],
-  avatar: "",
+  avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%B0%8F%E7%BA%A2%E5%90%8C%E5%AD%A6.jpeg",
   level: 2,
 };
 
@@ -41,10 +40,28 @@ const PersonalCenter: React.FC = () => {
     setStars(mockUserInfo.level || 0);
   }, []);
 
+  // 现有问题
   const history = [
-    { size: "large", url: test, title: "考研", label: "英语真题" },
-    { size: "large", url: test, title: "考研", label: "英语真题" },
-    { size: "large", url: test, title: "考研", label: "英语真题" },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%901.jpg", title: "零基础如何学钢琴？", tags: ["音乐", "兴趣", "入门"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%95%99%E8%82%B2/%E6%95%99%E8%82%B22.jpg", title: "高考志愿填报注意事项？", tags: ["教育", "高考", "志愿"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%BD%B1%E8%A7%86/%E5%BD%B1%E8%A7%861.jpg", title: "最近有哪些好看的国产电影？", tags: ["影视", "电影", "推荐"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E7%83%B9%E9%A5%AA/%E7%83%B9%E9%A5%AA1.jpg", title: "如何做出好吃的红烧肉？", tags: ["烹饪", "美食", "家常菜"] },
+  ];
+
+  // 提问对话
+  const askChats = [
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B2.jpg", title: "遇到交通事故如何维权？", tags: ["法律", "交通", "维权"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%81%A5%E8%BA%AB/%E5%81%A5%E8%BA%AB2.jpg", title: "增肌期间饮食怎么安排？", tags: ["健身", "饮食", "增肌"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%97%85%E6%B8%B8/%E6%97%85%E6%B8%B81.jpg", title: "成都有哪些美食推荐？", tags: ["旅游", "美食", "推荐"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%8C%BB%E7%96%97/%E5%8C%BB%E7%96%973.jpg", title: "感冒发烧如何自我护理？", tags: ["医疗", "护理", "常见病"] },
+    ];
+
+  // 答题对话
+  const answerChats = [
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B3.jpg", title: "劳动合同到期后怎么办？", tags: ["法律", "劳动", "合同"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%902.jpg", title: "流行歌曲推荐？", tags: ["音乐", "流行", "推荐"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B8%B8%E6%88%8F/%E6%B8%B8%E6%88%8F3.jpg", title: "英雄联盟上分心得？", tags: ["游戏", "英雄联盟", "心得"] },
+    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E7%83%B9%E9%A5%AA/%E7%83%B9%E9%A5%AA3.jpg", title: "早餐怎么吃更营养？", tags: ["烹饪", "早餐", "营养"] },
   ];
 
   const handleStarChange = (value) => {
@@ -152,10 +169,9 @@ const PersonalCenter: React.FC = () => {
               size={card.size}
               url={card.url}
               title={card.title}
-              label={card.label}
+              tags={card.tags}
             />
           ))}
-          {/* 渐变遮罩层 */}
           <View className="list-gradient-mask" />
         </View>
       </View>
@@ -167,13 +183,13 @@ const PersonalCenter: React.FC = () => {
           </AtButton>
         </View>
         <View className="cardList gradient-list">
-          {history.map((card, index) => (
+          {askChats.map((card, index) => (
             <Card
               key={index}
               size={card.size}
               url={card.url}
               title={card.title}
-              label={card.label}
+              tags={card.tags}
             />
           ))}
           <View className="list-gradient-mask" />
@@ -187,13 +203,13 @@ const PersonalCenter: React.FC = () => {
           </AtButton>
         </View>
         <View className="cardList gradient-list">
-          {history.map((card, index) => (
+          {answerChats.map((card, index) => (
             <Card
               key={index}
               size={card.size}
               url={card.url}
               title={card.title}
-              label={card.label}
+              tags={card.tags}
             />
           ))}
           <View className="list-gradient-mask" />

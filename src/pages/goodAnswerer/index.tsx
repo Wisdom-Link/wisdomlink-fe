@@ -6,6 +6,7 @@ import Taro from "@tarojs/taro";
 import avatar from "../../assets/头像.jpeg";
 import "./index.scss";
 import PostCard from "../../components/PostCard";
+import BtnCanMove from "../../components/Btn_CanMove";
 
 const AnswererCard = ({ url, title, label }) => {
   return (
@@ -24,7 +25,7 @@ const AnswererCard = ({ url, title, label }) => {
 // 新的帖子数据结构
 const posts = [
   {
-    avatar: avatar,
+    avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%B0%8F%E7%BA%A2%E5%90%8C%E5%AD%A6.jpeg",
     name: "小红同学",
     time: "2024-06-01 09:20",
     location: "湖北省武汉市",
@@ -33,7 +34,7 @@ const posts = [
     tags: ["考试", "考研", "英语"],
   },
   {
-    avatar: avatar,
+    avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%81%A5%E8%BA%AB%E8%BE%BE%E4%BA%BA.jpg",
     name: "健身达人",
     time: "2024-05-28 18:45",
     location: "广东省深圳市",
@@ -42,7 +43,7 @@ const posts = [
     tags: ["健身", "增肌", "健康"],
   },
   {
-    avatar: avatar,
+    avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E6%97%85%E8%A1%8C%E5%B0%8F%E7%86%8A.jpg",
     name: "旅行小熊",
     time: "2024-05-20 14:10",
     location: "四川省成都市",
@@ -82,7 +83,7 @@ const GoodAnswerer: React.FC = () => {
   return (
     <>
       <View className="page" style={{ paddingBottom: "70px" }}>
-        <View className="title">排名</View>
+        {/* <View className="title">排名</View>
         <ScrollView scrollX className="scroll-container">
           <View className="scroll-content">
             {Cards.map((card, index) => (
@@ -94,7 +95,7 @@ const GoodAnswerer: React.FC = () => {
               />
             ))}
           </View>
-        </ScrollView>
+        </ScrollView> */}
         <View className="title">问题</View>
         <View className="post-list">
           {posts.map((post, idx) => (
@@ -148,7 +149,10 @@ const GoodAnswerer: React.FC = () => {
         </AtModalAction>
       </AtModal>
       {/* 固定底部按钮，始终可见 */}
-      <View className="fixed-bottom-btn">
+      <BtnCanMove
+        onClick={() => setShowModal(true)}
+      />
+      {/* <View className="fixed-bottom-btn">
         <Button
           type="primary"
           className="fixed-btn"
@@ -156,7 +160,8 @@ const GoodAnswerer: React.FC = () => {
         >
           发送问题
         </Button>
-      </View>
+      </View> */}
+
     </>
   );
 };

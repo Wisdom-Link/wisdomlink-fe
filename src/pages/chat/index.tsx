@@ -2,7 +2,6 @@
 import { useState} from "react";
 import Taro ,{ useDidShow } from "@tarojs/taro";
 import { View, Image, Button, Input } from "@tarojs/components";
-import cartoon from "../../assets/头像 女孩.png";
 import "./index.scss";
 
 interface ChatItem {
@@ -64,11 +63,11 @@ const ChatPage: React.FC = () => {
           <View className="card">
             <View className="up">
               <View className="picture">
-                <Image className="card-icon" src={cartoon}></Image>
+                <Image className="card-icon" src="https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%B0%8F%E7%BA%A2%E5%90%8C%E5%AD%A6.jpeg"></Image>
               </View>
               <View className="contents">
                 <View className="card-title">哈喽~</View>
-                <View className="text">我是解答员xxx, 很高兴为您服务</View>
+                <View className="text">我是解答员小红同学, 很高兴为您服务</View>
               </View>
             </View>
           </View>

@@ -25,6 +25,7 @@
   flex-wrap: nowrap; // 禁止换行
   gap: 10px; // 让 Card 之间有间距
   min-width: max-content; // 确保内容不会折行
+  overflow-x: hidden;
 }
 
 .answerer{
