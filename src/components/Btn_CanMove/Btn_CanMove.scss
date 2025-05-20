@@ -13,10 +13,7 @@
   position: fixed;
   user-select: none;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: top linear 0.03s, left linear 0.03s;
   z-index: 9999;
-  // 可选：按下时加深阴影
-  &:active {
-    box-shadow: 0 8rpx 24rpx rgba(97,144,232,0.28);
-  }
 }
+

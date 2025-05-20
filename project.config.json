@@ -1,15 +1,32 @@
 {
-  "miniprogramRoot": "./dist",
-  "projectname": "WisdomLink",
-  "description": "智汇桥",
-  "appid": "wxb9204b4520c934f4",
-  "setting": {
-    "urlCheck": true,
-    "es6": false,
-    "enhance": false,
-    "compileHotReLoad": false,
-    "postcss": false,
-    "minified": false
-  },
-  "compileType": "miniprogram"
+    "miniprogramRoot": "dist/",
+    "projectname": "WisdomLink",
+    "description": "智汇桥",
+    "appid": "wxb9204b4520c934f4",
+    "setting": {
+        "urlCheck": true,
+        "es6": false,
+        "enhance": false,
+        "compileHotReLoad": false,
+        "postcss": false,
+        "minified": false,
+        "babelSetting": {
+            "ignore": [],
+            "disablePlugins": [],
+            "outputPath": ""
+        }
+    },
+    "compileType": "miniprogram",
+    "libVersion": "3.8.4",
+    "isGameTourist": false,
+    "srcMiniprogramRoot": "dist/",
+    "packOptions": {
+        "ignore": [],
+        "include": []
+    },
+    "condition": {},
+    "editorSetting": {
+        "tabIndent": "insertSpaces",
+        "tabSize": 4
+    }
 }
