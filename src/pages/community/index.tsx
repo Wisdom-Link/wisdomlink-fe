@@ -49,66 +49,22 @@ const Community: React.FC = () => {
     {
       id: 1,
       size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%95%99%E8%82%B2.jpg",
-      title: "教育",
+      url: "http://szsykcdad.hn-bkt.clouddn.com/community/%E5%AD%A6%E4%B8%9A.jpg",
+      title: "学业",
     },
     {
       id: 2,
       size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E5%81%A5%E8%BA%AB.jpg",
-      title: "健身",
+      url: "http://szsykcdad.hn-bkt.clouddn.com/community/%E5%AE%B6%E5%BA%AD.webp",
+      title: "家庭",
     },
     {
       id: 3,
       size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%97%85%E6%B8%B8.jpg",
-      title: "旅游",
-    },
-    {
-      id: 4,
-      size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E9%9F%B3%E4%B9%90.jpg",
-      title: "音乐",
-    },
-    {
-      id: 5,
-      size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%B3%95%E5%BE%8B.jpg",
-      title: "法律",
-    },
-    {
-      id: 6,
-      size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E5%BD%B1%E8%A7%86.png",
-      title: "影视",
-    },
-    {
-      id: 7,
-      size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E5%8C%BB%E7%96%97.jpg",
-      title: "医疗",
-    },
-    {
-      id: 8,
-      size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E7%83%B9%E9%A5%AA.jpg",
-      title: "烹饪",
-    },
-    {
-      id: 9,
-      size: "small",
-      url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%BB%E9%A1%B5/banner/%E6%B8%B8%E6%88%8F.jpg",
-      title: "游戏",
+      url: "http://szsykcdad.hn-bkt.clouddn.com/community/%E4%BA%8B%E4%B8%9A.webp",
+      title: "事业",
     },
   ];
-  // const middleCards = [
-  //   {id:1, size: "middle", url: test, title: "高考", label: "数学真题" },
-  //   {id:2, size: "middle", url: test, title: "高考", label: "数学真题" },
-  //   {id:3, size: "middle", url: test, title: "高考", label: "数学真题" },
-  //   {id:4, size: "middle", url: test, title: "高考", label: "数学真题" },
-  //   {id:5, size: "middle", url: test, title: "高考", label: "数学真题" },
-  // ];
-
   return (
     <View className="page">
       <View className="title">社区</View>

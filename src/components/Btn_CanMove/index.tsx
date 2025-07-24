@@ -11,7 +11,7 @@ const BtnCanMove = ({ icon = "＋", onClick }) => {
   const [start, setStart] = useState({ x: 0, y: 0 });
 
   const getWindowSize = () => {
-    const { windowWidth, windowHeight } = Taro.getSystemInfoSync();
+    const { windowWidth, windowHeight } = Taro.getWindowInfo();
     return { windowWidth, windowHeight };
   };
 

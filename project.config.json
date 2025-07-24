@@ -2,7 +2,7 @@
     "miniprogramRoot": "dist/",
     "projectname": "WisdomLink",
     "description": "智汇桥",
-    "appid": "wxb9204b4520c934f4",
+    "appid": "wx4cefd70ab4eb35a8",
     "setting": {
         "urlCheck": true,
         "es6": false,
@@ -17,7 +17,7 @@
         }
     },
     "compileType": "miniprogram",
-    "libVersion": "3.8.4",
+    "libVersion": "3.8.11",
     "isGameTourist": false,
     "srcMiniprogramRoot": "dist/",
     "packOptions": {

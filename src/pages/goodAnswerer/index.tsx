@@ -148,20 +148,10 @@ const GoodAnswerer: React.FC = () => {
           </Button>
         </AtModalAction>
       </AtModal>
-      {/* 固定底部按钮，始终可见 */}
+      {/* 可拖动按钮*/}
       <BtnCanMove
         onClick={() => setShowModal(true)}
       />
-      {/* <View className="fixed-bottom-btn">
-        <Button
-          type="primary"
-          className="fixed-btn"
-          onClick={() => setShowModal(true)}
-        >
-          发送问题
-        </Button>
-      </View> */}
-
     </>
   );
 };

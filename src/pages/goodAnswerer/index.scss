@@ -85,21 +85,6 @@
 }
 
 
-.fixed-bottom-btn {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  background-color: #fff;
-  z-index: 9999;
-  padding: 10rpx 16rpx 20rpx 16rpx;
-  box-sizing: border-box;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
-  display: flex;
-  justify-content: center;
-}
-
 .fixed-btn {
   width: 80%;
   display: flex;

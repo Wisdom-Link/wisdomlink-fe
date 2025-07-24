@@ -10,13 +10,19 @@ export function request(options: Taro.request.Option) {
       ...options.header,
       Authorization: Taro.getStorageSync('token') || '',
     },
-    // 你可以在这里统一处理 loading、错误等
   }).then(res => {
+    // 打印后端返回的所有数据
+    console.log('Response from backend:', res)
     if (res.statusCode === 200) {
       return res.data
     } else {
       Taro.showToast({ title: '请求失败', icon: 'none' })
       return Promise.reject(res)
     }
+  }).catch(error => {
+    // 打印错误信息
+    console.error('Request error:', error)
+    Taro.showToast({ title: '网络错误', icon: 'none' })
+    return Promise.reject(error)
   })
 }
