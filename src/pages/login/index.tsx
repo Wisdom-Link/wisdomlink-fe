@@ -5,7 +5,7 @@ import { View, Image, Text } from "@tarojs/components";
 import { AtInput, AtButton, AtMessage, AtIcon } from "taro-ui";
 import logo from "../../assets/智汇桥logo.png";
 import "./index.scss";
-import { request } from "../../utils/request";
+import { login as loginApi, register as registerApi } from "../../apis/user";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -21,18 +21,14 @@ const LoginPage: React.FC = () => {
       Taro.atMessage({ message: "请输入密码", type: "error" });
       return;
     }
-    request({
-      url: "/user/login",
-      method: "POST",
-      data: { username, password },
-    })
+    loginApi({ username, password })
       .then((data) => {
-        if (data.success) {
+        if (data.token) {
           Taro.atMessage({ message: "登录成功", type: "success" });
           Taro.setStorageSync("token", data.token);
           Taro.switchTab({ url: "/pages/index/index" });
         } else {
-          Taro.atMessage({ message: data.message, type: "error" });
+          Taro.atMessage({ message: data.message || "登录失败", type: "error" });
         }
       })
       .catch(() => {
@@ -50,12 +46,19 @@ const LoginPage: React.FC = () => {
       Taro.atMessage({ message: "请输入密码", type: "error" });
       return;
     }
-    // 用户名和密码都填写后跳转并传参
-    Taro.navigateTo({
-      url: `/pages/personInfo/index?username=${encodeURIComponent(
-        username
-      )}&password=${encodeURIComponent(password)}`,
-    });
+    registerApi({ username, password })
+      .then((data) => {
+        if (data.token) {
+          Taro.atMessage({ message: "注册成功", type: "success" });
+          Taro.setStorageSync("token", data.token);
+          Taro.switchTab({ url: "/pages/index/index" });
+        } else {
+          Taro.atMessage({ message: data.message || "注册失败", type: "error" });
+        }
+      })
+      .catch(() => {
+        Taro.atMessage({ message: "注册失败，请检查网络", type: "error" });
+      });
   };
 
   return (

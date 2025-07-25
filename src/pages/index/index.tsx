@@ -6,11 +6,12 @@ import { AtIcon } from "taro-ui";
 import  SearchBox  from "../../components/SearchBox";
 import "./index.scss";
 import AICard from "../../components/AICard";
+import { checkAuth } from "../../utils/auth"; // 引入路由守卫
 
 const cardList = [
-  {id:1, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A1.jpg", title: "智能体1号", label: "关于学业的问题都可以问我" },
-  {id:2, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A2.webp", title: "智能体2号", label: "关于家庭的问题都可以问我" },
-  {id:3, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A3.webp", title: "智能体3号", label: "关于事业的问题都可以问我" },
+  { id: 1, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A1.jpg", title: "智能体1号", label: "关于学业的问题都可以问我" },
+  { id: 2, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A2.webp", title: "智能体2号", label: "关于家庭的问题都可以问我" },
+  { id: 3, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A3.webp", title: "智能体3号", label: "关于事业的问题都可以问我" },
 ];
 
 const bannerList = [
@@ -20,8 +21,12 @@ const bannerList = [
  ]
 
 const MainPage: React.FC = () => {
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
   const changeRoute=(id:number)=>{
-    Taro.navigateTo({ url: `/pages/chat/index?chatId=${id}` });
+    Taro.navigateTo({ url: `/pages/AIchat/index?chatId=${id}` });
   }
 
   return (

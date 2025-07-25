@@ -3,13 +3,13 @@ export default defineAppConfig({
     'pages/index/index',
     'pages/goodAnswerer/index',
     'pages/login/index',
-    'pages/personInfo/index',
     'pages/personalCenter/index',
     'pages/chatList/index',
     'pages/allChats/index',
     'pages/changePosts/index',
     'pages/changeInfo/index',
     'pages/chat/index',
+    'pages/AIchat/index',
     'pages/community/index'
   ],
   tabBar: {

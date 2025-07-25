@@ -4,7 +4,7 @@ import Taro from "@tarojs/taro";
 import { AtAvatar, AtTag, AtRate, AtButton } from "taro-ui";
 import { View, Text } from "@tarojs/components";
 import Card from "../../components/Card";
-import avatarDefault from "../../assets/头像.jpeg";
+import avatarDefault from "../../assets/头像.png";
 import "./index.scss";
 
 const mockUserInfo = {
