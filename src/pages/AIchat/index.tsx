@@ -1,9 +1,24 @@
 /* eslint-disable jsx-quotes */
 import { useState, useEffect, useRef } from "react";
 import Taro, { getCurrentInstance } from "@tarojs/taro";
-import { View, Button, Input, ScrollView } from "@tarojs/components";
+import { View, Button, Input, RichText } from "@tarojs/components";
 import { baseURL } from "../../utils/request";
 import "./index.scss";
+
+// 简单的 markdown 转换函数
+function markdownToHtml(markdown: string): string {
+  return markdown
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // 粗体
+    .replace(/\*(.*?)\*/g, '<em>$1</em>') // 斜体
+    .replace(/`(.*?)`/g, '<code>$1</code>') // 行内代码
+    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // 代码块
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>') // h3 标题
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>') // h2 标题
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>') // h1 标题
+    .replace(/^\- (.*$)/gim, '<li>$1</li>') // 列表项
+    .replace(/(<li>[\s\S]*<\/li>)/, '<ul>$1</ul>') // 包装列表
+    .replace(/\n/g, '<br/>'); // 换行
+}
 
 interface ChatItem {
   type: string;
@@ -20,6 +35,7 @@ const AIChatPage: React.FC = () => {
   const [input, setInput] = useState("");
   const [chatList, setChatList] = useState<ChatItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const wsRef = useRef<any>(null);
 
   useEffect(() => {
     // 从url获取chatId
@@ -34,7 +50,7 @@ const AIChatPage: React.FC = () => {
     ]);
   }, []);
 
-  // 发送消息并流式接收AI回复（兼容小程序和H5）
+  // 使用 WebSocket 实现流式输出
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     const router = getCurrentInstance().router;
@@ -51,7 +67,6 @@ const AIChatPage: React.FC = () => {
 
     try {
       const token = Taro.getStorageSync("token");
-      const url = `${baseURL}/chat/AIchat`;
       const messages = [
         { role: "system", content: `你是${typeInfo.title}智能体，请只用${typeInfo.title}相关知识解答用户问题。` },
         ...chatList.map((item) => ({
@@ -61,74 +76,70 @@ const AIChatPage: React.FC = () => {
         { role: "user", content: input },
       ];
 
-      // 判断环境
-      const isMiniApp = Taro.getEnv && Taro.getEnv() === Taro.ENV_TYPE.WEAPP;
-      if (isMiniApp) {
-        // 小程序端不支持fetch流式，只能一次性拿到完整内容
-        const res = await Taro.request({
-          url,
-          method: "POST",
-          header: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          data: { messages },
-        });
-        if (res.statusCode === 200 && res.data && res.data.content) {
-          aiMsg.content = res.data.content;
-          setChatList((prev) => {
-            const newList = prev.slice(0, -1);
-            return [...newList, { ...aiMsg }];
+      const wsUrl = `${baseURL.replace(/^http/, "ws")}/chat/AIchat`;
+
+      // 小程序端使用 Taro.connectSocket
+      Taro.connectSocket({ url: wsUrl }).then((socketTask) => {
+        wsRef.current = socketTask;
+
+        socketTask.onOpen(() => {
+          socketTask.send({
+            data: JSON.stringify({ messages, token }),
           });
-        } else {
-          Taro.showToast({ title: "AI连接失败", icon: "none" });
-        }
-      } else {
-        // H5端支持流式
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ messages }),
         });
-        if (!response.body) {
-          throw new Error("无流式响应体");
-        }
-        const reader = response.body.getReader();
-        let done = false;
-        let text = "";
-        while (!done) {
-          const { value, done: readerDone } = await reader.read();
-          if (value) {
-            const chunk = new TextDecoder().decode(value);
-            text += chunk;
-            aiMsg.content = text;
-            setChatList((prev) => {
-              const newList = prev.slice(0, -1);
-              return [...newList, { ...aiMsg }];
-            });
+
+        socketTask.onMessage((res) => {
+          try {
+            const data = JSON.parse(res.data as string);
+            if (data.type === 'content') {
+              aiMsg.content += data.content;
+              setChatList((prev) => {
+                const newList = prev.slice(0, -1);
+                return [...newList, { ...aiMsg }];
+              });
+            } else if (data.type === 'end') {
+              setIsLoading(false);
+              socketTask.close({});
+            } else if (data.type === 'error') {
+              Taro.showToast({ title: data.error || "AI连接失败", icon: "none" });
+              setIsLoading(false);
+              socketTask.close({});
+            }
+          } catch (e) {
+            console.error("解析 WebSocket 消息失败:", e);
           }
-          done = readerDone;
-        }
-      }
+        });
+
+        socketTask.onError(() => {
+          Taro.showToast({ title: "AI连接失败", icon: "none" });
+          setIsLoading(false);
+        });
+
+        socketTask.onClose(() => {
+          setIsLoading(false);
+        });
+      });
+
     } catch (e) {
       console.error("AI连接异常:", e);
       Taro.showToast({ title: "AI连接失败", icon: "none" });
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
     <View className="page">
-      <ScrollView className="chatList" scrollY>
+      <View className="chatList">
         {chatList.map((item, index) => (
           <View key={index} className={`${item.type}`}>
-            {item.content}
+            {item.type === 'ai' ? (
+              <RichText nodes={markdownToHtml(item.content)} />
+            ) : (
+              item.content
+            )}
           </View>
         ))}
-      </ScrollView>
+      </View>
       <View className="input-container">
         <Input
           value={input}
