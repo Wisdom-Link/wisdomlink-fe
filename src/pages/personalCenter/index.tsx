@@ -4,9 +4,10 @@ import Taro, { useDidShow } from "@tarojs/taro";
 import { AtAvatar, AtTag, AtRate, AtButton } from "taro-ui";
 import { View, Text } from "@tarojs/components";
 import Card from "../../components/Card";
-import avatarDefault from "../../assets/头像.png";
 import { getInfo } from "../../apis/user";
 import "./index.scss";
+
+const defaultAvatar = "http://szsykcdad.hn-bkt.clouddn.com/avatar/%E9%BB%98%E8%AE%A4123456789.png";
 
 const PersonalCenter: React.FC = () => {
   const [userInfo, setUserInfo] = useState<{
@@ -125,7 +126,7 @@ const PersonalCenter: React.FC = () => {
             <View className="avatar">
               <AtAvatar
                 circle
-                image={userInfo.avatar ? userInfo.avatar : avatarDefault}
+                image={userInfo.avatar ? userInfo.avatar : defaultAvatar}
                 size="large"
               ></AtAvatar>
             </View>
@@ -191,15 +192,21 @@ const PersonalCenter: React.FC = () => {
           </AtButton>
         </View>
         <View className="cardList gradient-list">
-          {history.map((card, index) => (
-            <Card
-              key={index}
-              size={card.size}
-              url={card.url}
-              title={card.title}
-              tags={card.tags}
-            />
-          ))}
+          {history.length > 0 ? (
+            history.map((card, index) => (
+              <Card
+                key={index}
+                size={card.size}
+                url={card.url}
+                title={card.title}
+                tags={card.tags}
+              />
+            ))
+          ) : (
+            <View style={{ padding: "40rpx", textAlign: "center", color: "#999" }}>
+              暂无现有问题
+            </View>
+          )}
           <View className="list-gradient-mask" />
         </View>
       </View>
@@ -211,15 +218,21 @@ const PersonalCenter: React.FC = () => {
           </AtButton>
         </View>
         <View className="cardList gradient-list">
-          {askChats.map((card, index) => (
-            <Card
-              key={index}
-              size={card.size}
-              url={card.url}
-              title={card.title}
-              tags={card.tags}
-            />
-          ))}
+          {askChats.length > 0 ? (
+            askChats.map((card, index) => (
+              <Card
+                key={index}
+                size={card.size}
+                url={card.url}
+                title={card.title}
+                tags={card.tags}
+              />
+            ))
+          ) : (
+            <View style={{ padding: "40rpx", textAlign: "center", color: "#999" }}>
+              暂无提问对话
+            </View>
+          )}
           <View className="list-gradient-mask" />
         </View>
       </View>
@@ -231,15 +244,21 @@ const PersonalCenter: React.FC = () => {
           </AtButton>
         </View>
         <View className="cardList gradient-list">
-          {answerChats.map((card, index) => (
-            <Card
-              key={index}
-              size={card.size}
-              url={card.url}
-              title={card.title}
-              tags={card.tags}
-            />
-          ))}
+          {answerChats.length > 0 ? (
+            answerChats.map((card, index) => (
+              <Card
+                key={index}
+                size={card.size}
+                url={card.url}
+                title={card.title}
+                tags={card.tags}
+              />
+            ))
+          ) : (
+            <View style={{ padding: "40rpx", textAlign: "center", color: "#999" }}>
+              暂无答题对话
+            </View>
+          )}
           <View className="list-gradient-mask" />
         </View>
       </View>

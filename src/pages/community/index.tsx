@@ -81,15 +81,6 @@ const Community: React.FC = () => {
           ))}
         </View>
       </ScrollView>
-      {/*
-      <View className="title">热门问题</View>
-      <ScrollView scrollX className="scroll-container">
-        <View className="scroll-content">
-          {middleCards.map((card) => (
-            <Card key={card.id} size={card.size} url={card.url} title={card.title} label={card.label} onClick={()=>changeRoute(card.id)} />
-          ))}
-        </View>
-      </ScrollView> */}
       <View className="title">热门问题</View>
       <View className="post-list">
         {posts.map((post, idx) => (
@@ -107,5 +98,6 @@ const Community: React.FC = () => {
     </View>
   );
 };
+
 
 export default Community;
