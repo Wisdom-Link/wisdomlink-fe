@@ -1,10 +1,10 @@
 /* eslint-disable jsx-quotes */
 import { useState, useEffect } from "react";
 import Taro from "@tarojs/taro";
-import { View, Image } from "@tarojs/components";
+import { View, Image, Text } from "@tarojs/components";
 import { AtInput, AtButton } from "taro-ui";
 import "./index.scss";
-import { request } from "../../utils/request";
+import { getInfo, updateInfo } from "../../apis/user";
 
 const ChangePage: React.FC = () => {
   // 新增：用于存储后端原始信息
@@ -20,23 +20,16 @@ const ChangePage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
   const [motto, setMotto] = useState("");
-  const [gender, setGender] = useState("");
-  const [level, setLevel] = useState(1);
   const [tags, setTags] = useState<string[]>([]);
   const [inputTag, setInputTag] = useState("");
 
   // 页面加载时获取用户信息
   useEffect(() => {
-    request({
-      url: "/user/getInfo",
-      method: "GET",
-    }).then((data) => {
+    getInfo().then((data) => {
       setOriginInfo(data);
       setUsername("");
       setMotto("");
-      setGender("");
       setAvatar("");
-      setLevel(data.level || 1);
       setTags(Array.isArray(data.taps) ? data.taps : []);
     });
   }, []);
@@ -52,10 +45,20 @@ const ChangePage: React.FC = () => {
       case "motto":
         setMotto(value);
         break;
-      case "deleteTag":
-        setTags((prevTags) => prevTags.filter((t) => t !== value));
-        break;
     }
+  };
+
+  // 添加标签的处理函数
+  const handleAddTag = () => {
+    if (inputTag.trim() && !tags.includes(inputTag.trim())) {
+      setTags([...tags, inputTag.trim()]);
+      setInputTag(""); // 清空输入框
+    }
+  };
+
+  // 删除标签的处理函数
+  const handleDeleteTag = (tagToDelete: string) => {
+    setTags(tags.filter(tag => tag !== tagToDelete));
   };
 
   const handleChooseImage = (type: "avatar" | "background") => {
@@ -111,18 +114,11 @@ const ChangePage: React.FC = () => {
     const postData = {
       username: username || originInfo.username,
       motto: motto || originInfo.motto,
-      gender: gender || originInfo.gender,
       avatar: avatarUrl,
-      level: level,
       taps: tags,
     };
 
-    request({
-      url: "/user/update",
-      method: "PUT",
-      data: postData,
-      header: { "Content-Type": "application/json" },
-    })
+    updateInfo(postData)
       .then((res) => {
         if (res && res.success) {
           Taro.showToast({ title: "提交成功", icon: "success" });
@@ -167,17 +163,45 @@ const ChangePage: React.FC = () => {
             value={inputTag}
             onChange={handleChange("addTag")}
           />
+          <AtButton
+            size="small"
+            type="primary"
+            onClick={handleAddTag}
+            style={{ marginTop: "10rpx" }}
+          >
+            添加
+          </AtButton>
         </View>
+
+        {/* 显示当前标签 */}
         <View className="submit-item">
-          <AtInput
-            name="deleteTag"
-            title="删除标签"
-            type="text"
-            placeholder="请输入要删除的标签"
-            value={inputTag}
-            onChange={handleChange("deleteTag")}
-          />
+          <View style={{ margin: "20rpx 5% 10rpx 5%" }}>当前标签：</View>
+          <View style={{ display: "flex", flexWrap: "wrap", padding: "0 5%" }}>
+            {tags.map((tag, index) => (
+              <View
+                key={index}
+                className="tag-item"
+                style={{
+                  background: "#f0f0f0",
+                  padding: "5rpx 15rpx",
+                  margin: "5rpx",
+                  borderRadius: "15rpx",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                <Text>{tag}</Text>
+                <Text
+                  style={{ marginLeft: "10rpx", color: "red", cursor: "pointer" }}
+                  onClick={() => handleDeleteTag(tag)}
+                >
+                  ×
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
+
         <View className="submit-item">
           <View style={{ margin: "20rpx 5% 40rpx 5%" }}>头像</View>
           {avatar || originInfo.avatar ? (

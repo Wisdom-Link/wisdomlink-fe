@@ -6,7 +6,9 @@ import { AtIcon } from "taro-ui";
 import  SearchBox  from "../../components/SearchBox";
 import "./index.scss";
 import AICard from "../../components/AICard";
-import { checkAuth } from "../../utils/auth"; // 引入路由守卫
+import { checkAuth } from "../../utils/auth";
+import { getInfo } from "../../apis/user";
+// import { clearUserData } from "../../utils/delete";
 
 const cardList = [
   { id: 1, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A1.jpg", title: "智能体1号", label: "关于学业的问题都可以问我" },
@@ -21,8 +23,21 @@ const bannerList = [
  ]
 
 const MainPage: React.FC = () => {
+  // 获取并存储用户信息
+  const fetchAndStoreUserInfo = async () => {
+    try {
+      const userInfo = await getInfo();
+      Taro.setStorageSync("userInfo", userInfo);
+    } catch (error) {
+      console.error("获取用户信息失败:", error);
+    }
+  };
+
   useEffect(() => {
-    checkAuth();
+    if (checkAuth()) {
+      // 验证通过后获取用户信息
+      fetchAndStoreUserInfo();
+    }
   }, []);
 
   const changeRoute=(id:number)=>{

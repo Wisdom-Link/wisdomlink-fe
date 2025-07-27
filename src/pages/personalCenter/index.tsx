@@ -1,44 +1,72 @@
 /* eslint-disable jsx-quotes */
 import React, { useState, useEffect } from "react";
-import Taro from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import { AtAvatar, AtTag, AtRate, AtButton } from "taro-ui";
 import { View, Text } from "@tarojs/components";
 import Card from "../../components/Card";
 import avatarDefault from "../../assets/头像.png";
+import { getInfo } from "../../apis/user";
 import "./index.scss";
 
-const mockUserInfo = {
-  username: "小红同学",
-  motto: "热爱生活，乐于助人",
-  gender: "female",
-  taps: ["考研", "算法", "英语"],
-  avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%B0%8F%E7%BA%A2%E5%90%8C%E5%AD%A6.jpeg",
-  level: 2,
-};
-
 const PersonalCenter: React.FC = () => {
-  // 用模拟数据
   const [userInfo, setUserInfo] = useState<{
       username: string;
       motto: string;
-      gender: string;
       taps: string[];
       avatar: string;
       level: number;
+      questionCount: number;
+      answerCount: number;
+      highQualityAnswerCount: number;
     }>({
       username: "",
       motto: "",
-      gender: "",
       taps: [],
       avatar: "",
       level: 1,
+      questionCount: 0,
+      answerCount: 0,
+      highQualityAnswerCount: 0,
     });
   const [stars, setStars] = useState(0);
 
+  // 获取用户信息的函数
+  const fetchUserInfo = async () => {
+    try {
+      // 先尝试从本地存储获取
+      const storedUserInfo = Taro.getStorageSync("userInfo");
+      if (storedUserInfo) {
+        setUserInfo(storedUserInfo);
+        setStars(storedUserInfo.level || 1);
+      }
+
+      // 然后从服务器获取最新数据
+      const latestUserInfo = await getInfo();
+      if (latestUserInfo) {
+        setUserInfo(latestUserInfo);
+        setStars(latestUserInfo.level || 1);
+        // 更新本地存储
+        Taro.setStorageSync("userInfo", latestUserInfo);
+      }
+    } catch (error) {
+      console.error("获取用户信息失败:", error);
+      // 如果网络请求失败，至少显示本地存储的数据
+      const storedUserInfo = Taro.getStorageSync("userInfo");
+      if (storedUserInfo) {
+        setUserInfo(storedUserInfo);
+        setStars(storedUserInfo.level || 1);
+      }
+    }
+  };
+
   useEffect(() => {
-    setUserInfo(mockUserInfo);
-    setStars(mockUserInfo.level || 0);
+    fetchUserInfo();
   }, []);
+
+  // 每次页面显示时重新获取用户信息
+  useDidShow(() => {
+    fetchUserInfo();
+  });
 
   // 现有问题
   const history = [
@@ -134,11 +162,11 @@ const PersonalCenter: React.FC = () => {
           </View>
           <View className="down">
             <View className="down-item">
-              <View className="text1">15/34</View>
+              <View className="text1">{userInfo.highQualityAnswerCount}/{userInfo.answerCount}</View>
               <View className="text2">优质回答</View>
             </View>
             <View className="down-item">
-              <View className="text1">24</View>
+              <View className="text1">{userInfo.questionCount}</View>
               <View className="text2">提问</View>
             </View>
             <View style={{ width: "30%" }}></View>
