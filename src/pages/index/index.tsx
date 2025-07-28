@@ -8,7 +8,7 @@ import "./index.scss";
 import AICard from "../../components/AICard";
 import { checkAuth } from "../../utils/auth";
 import { getInfo } from "../../apis/user";
-// import { clearUserData } from "../../utils/delete";
+import { clearUserData } from "../../utils/delete";
 
 const cardList = [
   { id: 1, url: "http://szsykcdad.hn-bkt.clouddn.com/cartoon/%E5%8D%A1%E9%80%9A1.jpg", title: "智能体1号", label: "关于学业的问题都可以问我" },
@@ -34,6 +34,7 @@ const MainPage: React.FC = () => {
   };
 
   useEffect(() => {
+
     if (checkAuth()) {
       // 验证通过后获取用户信息
       fetchAndStoreUserInfo();

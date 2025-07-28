@@ -78,25 +78,37 @@ const ChangePage: React.FC = () => {
     });
   };
 
+  // 七牛云上传文件
   const uploadFile = async (filePath: string, fileType: string): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        Taro.uploadFile({
-          url: "https://your-api-endpoint.com/api/upload",
-          filePath,
-          name: "file",
-          formData: { type: fileType },
-          success: (res) => {
-            const data = JSON.parse(res.data);
-            if (data.url) {
-              resolve(data.url);
-            } else {
-              reject("上传失败");
-            }
-          },
-          fail: (err) => reject(err),
-        });
+    // 1. 获取七牛云上传凭证（token），需要后端接口支持
+    const { token, domain, key } = await Taro.request({
+      url: "https://your-api-endpoint.com/api/qiniu-token", // 替换为你后端获取七牛token的接口
+      method: "GET",
+      data: { fileType },
+    }).then(res => res.data);
+
+    // 2. 上传到七牛云
+    return new Promise((resolve, reject) => {
+      Taro.uploadFile({
+        url: "https://upload-z2.qiniup.com", // 华南区域，其他区域请更换
+        filePath,
+        name: "file",
+        formData: {
+          token,
+          key, // 建议后端返回唯一key
+        },
+        success: (res) => {
+          const data = JSON.parse(res.data);
+          if (data.key) {
+            resolve(`${domain}/${data.key}`);
+          } else {
+            reject("上传失败");
+          }
+        },
+        fail: (err) => reject(err),
       });
-    };
+    });
+  };
 
   const handleSubmit = async () => {
     let avatarUrl = avatar;
@@ -120,8 +132,11 @@ const ChangePage: React.FC = () => {
 
     updateInfo(postData)
       .then((res) => {
-        if (res && res.success) {
+        if (res) {
           Taro.showToast({ title: "提交成功", icon: "success" });
+          setTimeout(() => {
+            Taro.switchTab({ url: "/pages/personalCenter/index" });
+          }, 1000);
         } else {
           Taro.showToast({ title: "提交失败", icon: "none" });
         }

@@ -104,6 +104,20 @@ const GoodAnswerer: React.FC = () => {
   }, []);
 
   const handleSend = async () => {
+    // 验证必填项
+    if (!formText.trim()) {
+      Taro.showToast({ title: "请输入问题内容", icon: "none" });
+      return;
+    }
+    if (!selectedSecondTag) {
+      Taro.showToast({ title: "请选择二级标签", icon: "none" });
+      return;
+    }
+    if (!selectedThirdTag) {
+      Taro.showToast({ title: "请选择三级标签", icon: "none" });
+      return;
+    }
+
     try {
       // 获取用户信息
       const userInfo = Taro.getStorageSync("userInfo");
@@ -238,7 +252,6 @@ const GoodAnswerer: React.FC = () => {
           <Button onClick={() => setShowModal(false)}>取消</Button>
           <Button
             onClick={handleSend}
-            disabled={!formText || !selectedSecondTag || !selectedThirdTag}
             type="primary"
           >
             提交
@@ -255,3 +268,4 @@ const GoodAnswerer: React.FC = () => {
 
 
 export default GoodAnswerer;
+
