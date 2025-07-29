@@ -10,7 +10,8 @@ export default defineAppConfig({
     'pages/changeInfo/index',
     'pages/chat/index',
     'pages/AIchat/index',
-    'pages/community/index'
+    'pages/community/index',
+    'pages/searchResult/index',
   ],
   tabBar: {
     list: [

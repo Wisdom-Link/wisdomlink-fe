@@ -78,45 +78,31 @@ const ChangePage: React.FC = () => {
     });
   };
 
-  // 七牛云上传文件
-  const uploadFile = async (filePath: string, fileType: string): Promise<string> => {
-    // 1. 获取七牛云上传凭证（token），需要后端接口支持
-    const { token, domain, key } = await Taro.request({
-      url: "https://your-api-endpoint.com/api/qiniu-token", // 替换为你后端获取七牛token的接口
-      method: "GET",
-      data: { fileType },
-    }).then(res => res.data);
-
-    // 2. 上传到七牛云
+  // 将图片转换为 base64
+  const convertImageToBase64 = (filePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-      Taro.uploadFile({
-        url: "https://upload-z2.qiniup.com", // 华南区域，其他区域请更换
+      Taro.getFileSystemManager().readFile({
         filePath,
-        name: "file",
-        formData: {
-          token,
-          key, // 建议后端返回唯一key
-        },
+        encoding: 'base64',
         success: (res) => {
-          const data = JSON.parse(res.data);
-          if (data.key) {
-            resolve(`${domain}/${data.key}`);
-          } else {
-            reject("上传失败");
-          }
+          resolve(`data:image/jpeg;base64,${res.data}`);
         },
-        fail: (err) => reject(err),
+        fail: (err) => {
+          reject(err);
+        }
       });
     });
   };
 
   const handleSubmit = async () => {
     let avatarUrl = avatar;
+
+    // 如果选择了新头像且不是网络地址，转换为 base64
     if (avatar && !avatar.startsWith("http")) {
       try {
-        avatarUrl = await uploadFile(avatar, "avatar");
+        avatarUrl = await convertImageToBase64(avatar);
       } catch (error) {
-        Taro.showToast({ title: "图片上传失败", icon: "none" });
+        Taro.showToast({ title: "图片处理失败", icon: "none" });
         return;
       }
     } else if (!avatar) {

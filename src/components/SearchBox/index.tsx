@@ -16,10 +16,14 @@ const SearchBox = ({ placeholder = '请输入搜索内容', onSearch }: { placeh
   };
 
   const handleSearch = () => {
-    if (onSearch) {
-      onSearch(value);
+    if (value.trim()) {
+      if (onSearch) {
+        onSearch(value.trim());
+      } else {
+        Taro.navigateTo({ url: `/pages/searchResult/index?query=${value.trim()}` });
+      }
     } else {
-      Taro.navigateTo({ url: `/pages/searchResult/index?query=${value}` });
+      Taro.showToast({ title: '请输入搜索内容', icon: 'none' });
     }
   };
 

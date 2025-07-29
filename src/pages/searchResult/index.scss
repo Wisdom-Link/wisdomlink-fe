@@ -1,0 +1,107 @@
+.page {
+  background-color: #ffffff;
+  overflow-x: hidden; // 禁止横向滚动
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 20rpx 5%;
+  background-color: #ffffff;
+  font-size: larger;
+}
+
+.scroll-container {
+  width: 100%;
+  overflow-x: auto; // 允许横向滚动
+  white-space: nowrap; // 禁止换行
+  -webkit-overflow-scrolling: touch; // iOS 兼容
+  background-color: #ffffff;
+}
+
+.scroll-content {
+  display: flex; // 让 Card 横向排列
+  flex-wrap: nowrap; // 禁止换行
+  gap: 10px; // 让 Card 之间有间距
+  min-width: max-content; // 确保内容不会折行
+  padding: 0 15rpx;
+}
+
+.card {
+  width: 300rpx;
+  height: 150rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: whitesmoke;
+  border-radius: 20rpx;
+  margin: 10rpx 15rpx;
+  overflow: hidden;
+  box-shadow: 4rpx 4rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影
+
+  .card-picture {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-content {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 30rpx;
+    color: #ffffff;
+    padding: 0;
+
+    .card-title {
+      width: 100%;
+      height: 35rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30rpx;
+      color: #000000;
+    }
+
+    .card-label {
+      width: 100%;
+      height: 25rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25rpx;
+      color: #000000;
+    }
+  }
+}
+
+
+.fixed-btn {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30rpx;
+  background: linear-gradient(90deg, #4a7ddc, #8bb1ee); /* 添加渐变背景 */
+  color: #ffffff;
+  font-size: 30rpx;
+}
+
+.post-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  padding: 24rpx 0 24rpx 0;
+  align-items: center;
+}
+
