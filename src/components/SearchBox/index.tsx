@@ -20,7 +20,8 @@ const SearchBox = ({ placeholder = '请输入搜索内容', onSearch }: { placeh
       if (onSearch) {
         onSearch(value.trim());
       } else {
-        Taro.navigateTo({ url: `/pages/searchResult/index?query=${value.trim()}` });
+        // 建议保留 encodeURIComponent 以确保 URL 安全
+        Taro.navigateTo({ url: `/pages/searchResult/index?query=${encodeURIComponent(value.trim())}` });
       }
     } else {
       Taro.showToast({ title: '请输入搜索内容', icon: 'none' });

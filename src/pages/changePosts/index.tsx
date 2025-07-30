@@ -1,5 +1,5 @@
 /* eslint-disable jsx-quotes */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Button } from "@tarojs/components";
 import {
   AtAvatar,
@@ -11,6 +11,8 @@ import {
   AtInput,
 } from "taro-ui";
 import Taro from "@tarojs/taro";
+import { getThreadsByUsername } from "../../apis/thread";
+import { Post } from "../../types/thread";
 import avatar from "../../assets/头像.jpeg";
 import "./index.scss";
 
@@ -119,34 +121,46 @@ const PostCard: React.FC<{
   );
 };
 
-const mockPosts = [
-  {
-    url: avatar,
-    name: "刘思",
-    location: "湖北省",
-    time: "1小时前",
-    title: "关于保研问题",
-    label:
-      "1.了解导师研究方向，展现兴趣方向。2.成绩优良，科研经历丰富。3.提前准备申请材料，准确无误填写表格",
-    tags: ["保研", "经验"],
-  },
-  {
-    url: avatar,
-    name: "王二麻子",
-    location: "北京",
-    time: "2天前",
-    title: "考研英语难点",
-    label: "请问考研英语作文怎么准备？",
-    tags: ["考研", "英语"],
-  },
-];
-
 const CurrentPosts: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    // 获取当前用户的帖子
+    const fetchUserPosts = async () => {
+      try {
+        const userInfo = Taro.getStorageSync("userInfo");
+        const username = userInfo?.username;
+
+        if (username) {
+          const userPosts = await getThreadsByUsername(username);
+          setPosts(userPosts);
+        } else {
+          Taro.showToast({ title: "请先登录", icon: "none" });
+        }
+      } catch (error) {
+        console.error("获取用户帖子失败:", error);
+        Taro.showToast({ title: "获取数据失败", icon: "none" });
+        setPosts([]);
+      }
+    };
+
+    fetchUserPosts();
+  }, []);
+
   return (
     <View className="page">
       <View className="post-list">
-        {mockPosts.map((post, idx) => (
-          <PostCard key={idx} {...post} />
+        {posts.map((post, idx) => (
+          <PostCard
+            key={idx}
+            url={post.userAvatar}
+            name={post.username}
+            location={post.location || "未知位置"}
+            time={post.createdAt}
+            title="用户帖子"
+            label={post.content}
+            tags={post.tags || []}
+          />
         ))}
       </View>
     </View>

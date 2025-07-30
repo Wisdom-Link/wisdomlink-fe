@@ -6,7 +6,8 @@ import Taro,{ getCurrentInstance } from "@tarojs/taro";
 import "./index.scss";
 import PostCard from "../../components/PostCard";
 import BtnCanMove from "../../components/Btn_CanMove";
-import { saveThread } from "../../apis/thread";
+import { saveThread, getThreadsByCommunity } from "../../apis/thread";
+import { Post } from "../../types/thread";
 
 const AnswererCard = ({ url, title, label }) => {
   return (
@@ -23,7 +24,7 @@ const AnswererCard = ({ url, title, label }) => {
 };
 
 // 新的帖子数据结构
-const posts = [
+const demoPosts = [
   {
     avatar: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%B0%8F%E7%BA%A2%E5%90%8C%E5%AD%A6.jpeg",
     name: "小红同学",
@@ -56,6 +57,7 @@ const posts = [
 const GoodAnswerer: React.FC = () => {
   const [categoryId, setCategoryId] = useState<string>("");
   const [categoryTitle, setCategoryTitle] = useState<string>("");
+  const [posts, setPosts] = useState<Post[]>([]);
   // 弹窗相关状态
   const [showModal, setShowModal] = useState(false);
   const [formText, setFormText] = useState("");
@@ -100,7 +102,24 @@ const GoodAnswerer: React.FC = () => {
     const router = getCurrentInstance().router;
     const id = router?.params?.id || "1";
     setCategoryId(id);
-    setCategoryTitle(tagSystem[id]?.title || "未知分类");
+    const title = tagSystem[id]?.title || "未知分类";
+    setCategoryTitle(title);
+
+    // 获取对应社区的帖子
+    const fetchCommunityPosts = async () => {
+      try {
+        const communityPosts = await getThreadsByCommunity(title);
+        setPosts(communityPosts);
+      } catch (error) {
+        console.error("获取社区帖子失败:", error);
+        Taro.showToast({ title: "获取数据失败", icon: "none" });
+        setPosts([]); // 设置为空数组
+      }
+    };
+
+    if (title !== "未知分类") {
+      fetchCommunityPosts();
+    }
   }, []);
 
   const handleSend = async () => {
@@ -173,9 +192,9 @@ const GoodAnswerer: React.FC = () => {
           {posts.map((post, idx) => (
             <PostCard
               key={idx}
-              avatarUrl={post.avatar}
-              name={post.name}
-              time={post.time}
+              avatarUrl={post.userAvatar}
+              name={post.username}
+              time={post.createdAt}
               location={post.location}
               content={post.content}
               tags={post.tags}
