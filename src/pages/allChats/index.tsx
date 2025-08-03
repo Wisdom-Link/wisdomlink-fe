@@ -1,79 +1,66 @@
 /* eslint-disable jsx-quotes */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Taro from "@tarojs/taro";
 import { View, Button, Text } from "@tarojs/components";
 import { AtTabs } from "taro-ui";
-import bg1 from "../../assets/风景图.jpg";
+import { getQuestionerChats, getAnswererChats } from "../../apis/chat";
+import { Chat } from "../../types/chat";
 import "./index.scss";
-
-// 两组模拟数据
-const mockChatListAsk = [
-  {
-    id: 1,
-    title: "如何科学安排一周健身计划？",
-    tags: ["健身", "健康"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%81%A5%E8%BA%AB/%E5%81%A5%E8%BA%AB1.jpg",
-  },
-  {
-    id: 2,
-    title: "遇到合同纠纷应该怎么办？",
-    tags: ["法律", "咨询"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B1.jpg",
-  },
-  {
-    id: 3,
-    title: "云南旅游有哪些必去景点？",
-    tags: ["旅游", "攻略"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%97%85%E6%B8%B8/%E6%97%85%E6%B8%B82.jpeg",
-  },
-  {
-    id: 4,
-    title: "体检报告异常需要注意什么？",
-    tags: ["医疗", "健康"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%8C%BB%E7%96%97/%E5%8C%BB%E7%96%973.jpg",
-  },
-  {
-    id: 5,
-    title: "零基础如何学习钢琴？",
-    tags: ["音乐", "兴趣"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%901.jpg",
-  },
-];
-
-const mockChatListAnswer = [
-  {
-    id: 6,
-    title: "高考志愿填报有哪些注意事项？",
-    tags: ["教育", "经验"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%95%99%E8%82%B2/%E6%95%99%E8%82%B21.jpg",
-  },
-  {
-    id: 7,
-    title: "最近有哪些值得推荐的国产电影？",
-    tags: ["影视", "娱乐"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%BD%B1%E8%A7%86/%E5%BD%B1%E8%A7%861.jpg",
-  },
-  {
-    id: 8,
-    title: "王者荣耀新赛季上分技巧有哪些？",
-    tags: ["游戏", "交流"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B8%B8%E6%88%8F/%E6%B8%B8%E6%88%8F2.jpg",
-  },
-  {
-    id: 9,
-    title: "家常菜怎么做才更健康？",
-    tags: ["烹饪", "美食"],
-    background: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E7%83%B9%E9%A5%AA/%E7%83%B9%E9%A5%AA2.jpg",
-  },
-];
 
 const tabList = [{ title: "提问对话" }, { title: "答题对话" }];
 
 const ChatHistory: React.FC = () => {
   const [current, setCurrent] = useState(0);
+  const [questionerChats, setQuestionerChats] = useState<Chat[]>([]);
+  const [answererChats, setAnswererChats] = useState<Chat[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 获取对话数据
+  const fetchChatData = async () => {
+    setLoading(true);
+    try {
+      // 并行获取两种角色的历史对话（已完成）
+      const [questionerData, answererData] = await Promise.all([
+        getQuestionerChats('completed'), // 获取用户作为提问者的历史对话
+        getAnswererChats('completed')    // 获取用户作为回答者的历史对话
+      ]);
+
+      setQuestionerChats(questionerData);
+      setAnswererChats(answererData);
+    } catch (error) {
+      console.error("获取对话数据失败:", error);
+      Taro.showToast({ title: "获取数据失败", icon: "none" });
+      setQuestionerChats([]);
+      setAnswererChats([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchChatData();
+  }, []);
 
   // 根据标签页切换数据
-  const chatList = current === 0 ? mockChatListAsk : mockChatListAnswer;
+  const chatList = current === 0 ? questionerChats : answererChats;
+
+  // 处理跳转到聊天页面
+  const handleViewChat = (chatId: string) => {
+    Taro.navigateTo({
+      url: `/pages/chat/index?chatId=${chatId}`,
+    });
+  };
+
+  // 获取默认背景图
+  const getDefaultBackground = (index: number) => {
+    const defaultImages = [
+      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%81%A5%E8%BA%AB/%E5%81%A5%E8%BA%AB1.jpg",
+      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B1.jpg",
+      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%97%85%E6%B8%B8/%E6%97%85%E6%B8%B82.jpeg",
+      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%8C%BB%E7%96%97/%E5%8C%BB%E7%96%973.jpg",
+    ];
+    return defaultImages[index % defaultImages.length];
+  };
 
   return (
     <View className="page">
@@ -82,45 +69,69 @@ const ChatHistory: React.FC = () => {
           <AtTabs current={current} tabList={tabList} onClick={setCurrent} />
         </View>
       </View>
-      <View className="chat-list">
-        {chatList.map((item) => (
-          <View key={item.id} className="chat-card">
-            {/* 左侧背景图片 */}
-            <View
-              className="chat-card-bg"
-              style={{
-                background: `url(${item.background}) center/cover no-repeat`,
-              }}
-            />
-            {/* 中间标题和标签 */}
-            <View className="chat-content">
-              <View className="item-title">
-                {item.title}
+
+      {loading ? (
+        <View style={{
+          textAlign: "center",
+          padding: "60px 20px",
+          color: "#999"
+        }}
+        >
+          加载中...
+        </View>
+      ) : (
+        <View className="chat-list">
+          {chatList.length > 0 ? (
+            chatList.map((item, index) => (
+              <View key={item._id} className="chat-card">
+                {/* 左侧背景图片 */}
+                <View
+                  className="chat-card-bg"
+                  style={{
+                    background: `url(${item.imageUrl || getDefaultBackground(index)}) center/cover no-repeat`,
+                  }}
+                />
+                {/* 中间标题和标签 */}
+                <View className="chat-content">
+                  <View className="item-title">
+                    {item.subject}
+                  </View>
+                  <View className="tags-container">
+                    {Array.isArray(item.tap) && item.tap.map((tag, idx) => (
+                      <Text key={idx} className="tag">
+                        {tag}
+                      </Text>
+                    ))}
+                  </View>
+                  <View className="chat-status">
+                    <Text className={`status-badge ${item.status}`}>
+                      {item.status === 'ongoing' ? '进行中' : '已完成'}
+                    </Text>
+                  </View>
+                </View>
+                {/* 右侧按钮 */}
+                <View className="button-container">
+                  <Button
+                    className="chat-view-btn"
+                    onClick={() => handleViewChat(item._id)}
+                  >
+                    查看对话
+                  </Button>
+                </View>
               </View>
-              <View className="tags-container">
-                {item.tags.map((tag, idx) => (
-                  <Text key={idx} className="tag">
-                    {tag}
-                  </Text>
-                ))}
-              </View>
+            ))
+          ) : (
+            <View style={{
+              textAlign: "center",
+              padding: "60px 20px",
+              color: "#999"
+            }}
+            >
+              {current === 0 ? "暂无提问对话" : "暂无答题对话"}
             </View>
-            {/* 右侧按钮 */}
-            <View className="button-container">
-              <Button
-                className="chat-view-btn"
-                onClick={() =>
-                  Taro.navigateTo({
-                    url: `/pages/chat/index?chatId=${item.id}`,
-                  })
-                }
-              >
-                查看对话
-              </Button>
-            </View>
-          </View>
-        ))}
-      </View>
+          )}
+        </View>
+      )}
     </View>
   );
 };

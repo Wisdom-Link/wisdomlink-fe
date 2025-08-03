@@ -5,6 +5,9 @@ import { AtAvatar, AtTag, AtRate, AtButton } from "taro-ui";
 import { View, Text } from "@tarojs/components";
 import Card from "../../components/Card";
 import { getInfo } from "../../apis/user";
+import { getQuestionerChats, getAnswererChats } from "../../apis/chat";
+import { getThreadsByUsername } from "../../apis/thread";
+import { Chat } from "../../types/chat";
 import "./index.scss";
 
 const defaultAvatar = "http://szsykcdad.hn-bkt.clouddn.com/avatar/%E9%BB%98%E8%AE%A4123456789.png";
@@ -30,6 +33,27 @@ const PersonalCenter: React.FC = () => {
       highQualityAnswerCount: 0,
     });
   const [stars, setStars] = useState(0);
+  const [askChats, setAskChats] = useState<Chat[]>([]);
+  const [answerChats, setAnswerChats] = useState<Chat[]>([]);
+  const [userThreads, setUserThreads] = useState<any[]>([]);
+
+  // 获取对话数据
+  const fetchChatData = async () => {
+    try {
+      // 获取已完成的提问对话（最近4个）
+      const questionerChats = await getQuestionerChats('completed');
+      setAskChats(questionerChats.slice(0, 4));
+
+      // 获取已完成的答题对话（最近4个）
+      const answererChats = await getAnswererChats('completed');
+      setAnswerChats(answererChats.slice(0, 4));
+    } catch (error) {
+      console.error("获取对话数据失败:", error);
+      // 使用空数组作为fallback
+      setAskChats([]);
+      setAnswerChats([]);
+    }
+  };
 
   // 获取用户信息的函数
   const fetchUserInfo = async () => {
@@ -60,6 +84,20 @@ const PersonalCenter: React.FC = () => {
     }
   };
 
+  // 获取用户帖子数据
+  const fetchUserThreads = async () => {
+    try {
+      const storedUserInfo = Taro.getStorageSync("userInfo");
+      if (storedUserInfo?.username) {
+        const threads = await getThreadsByUsername(storedUserInfo.username);
+        setUserThreads(threads || []);
+      }
+    } catch (error) {
+      console.error("获取用户帖子失败:", error);
+      setUserThreads([]);
+    }
+  };
+
   useEffect(() => {
     fetchUserInfo();
   }, []);
@@ -68,34 +106,6 @@ const PersonalCenter: React.FC = () => {
   useDidShow(() => {
     fetchUserInfo();
   });
-
-  // 现有问题
-  const history = [
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%901.jpg", title: "零基础如何学钢琴？", tags: ["音乐", "兴趣", "入门"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%95%99%E8%82%B2/%E6%95%99%E8%82%B22.jpg", title: "高考志愿填报注意事项？", tags: ["教育", "高考", "志愿"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%BD%B1%E8%A7%86/%E5%BD%B1%E8%A7%861.jpg", title: "最近有哪些好看的国产电影？", tags: ["影视", "电影", "推荐"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E7%83%B9%E9%A5%AA/%E7%83%B9%E9%A5%AA1.jpg", title: "如何做出好吃的红烧肉？", tags: ["烹饪", "美食", "家常菜"] },
-  ];
-
-  // 提问对话
-  const askChats = [
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B2.jpg", title: "遇到交通事故如何维权？", tags: ["法律", "交通", "维权"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%81%A5%E8%BA%AB/%E5%81%A5%E8%BA%AB2.jpg", title: "增肌期间饮食怎么安排？", tags: ["健身", "饮食", "增肌"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%97%85%E6%B8%B8/%E6%97%85%E6%B8%B81.jpg", title: "成都有哪些美食推荐？", tags: ["旅游", "美食", "推荐"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%8C%BB%E7%96%97/%E5%8C%BB%E7%96%973.jpg", title: "感冒发烧如何自我护理？", tags: ["医疗", "护理", "常见病"] },
-    ];
-
-  // 答题对话
-  const answerChats = [
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B3.jpg", title: "劳动合同到期后怎么办？", tags: ["法律", "劳动", "合同"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%902.jpg", title: "流行歌曲推荐？", tags: ["音乐", "流行", "推荐"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B8%B8%E6%88%8F/%E6%B8%B8%E6%88%8F3.jpg", title: "英雄联盟上分心得？", tags: ["游戏", "英雄联盟", "心得"] },
-    { size: "large", url: "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E7%83%B9%E9%A5%AA/%E7%83%B9%E9%A5%AA3.jpg", title: "早餐怎么吃更营养？", tags: ["烹饪", "早餐", "营养"] },
-  ];
-
-  const handleStarChange = (value) => {
-    setStars(value);
-  };
 
   // 跳转到管理用户资料
   const goToUserInfo = () => {
@@ -117,6 +127,25 @@ const PersonalCenter: React.FC = () => {
       url: "/pages/allChats/index",
     });
   };
+
+  // 初始化加载用户信息和对话数据
+  useEffect(() => {
+    const init = async () => {
+      await fetchUserInfo();
+      await fetchChatData();
+      await fetchUserThreads();
+    };
+    init();
+  }, []);
+
+  // 每次页面显示时重新获取用户信息
+  useDidShow(() => {
+    const refreshData = async () => {
+      await fetchUserInfo();
+      await fetchUserThreads();
+    };
+    refreshData();
+  });
 
   return (
     <View className="page">
@@ -140,7 +169,6 @@ const PersonalCenter: React.FC = () => {
                 max={3}
                 size={20}
                 value={stars}
-                onChange={handleStarChange}
               />
             </View>
           </View>
@@ -192,14 +220,18 @@ const PersonalCenter: React.FC = () => {
           </AtButton>
         </View>
         <View className="cardList gradient-list">
-          {history.length > 0 ? (
-            history.map((card, index) => (
+          {userThreads.length > 0 ? (
+            userThreads.map((thread, index) => (
               <Card
-                key={index}
-                size={card.size}
-                url={card.url}
-                title={card.title}
-                tags={card.tags}
+                key={thread._id || index}
+                size="large"
+                url={thread.imageUrl || "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%901.jpg"}
+                title={thread.content || "暂无标题"}
+                tags={Array.isArray(thread.tags) ? thread.tags : []}
+                onClick={() => {
+                  // 可以添加跳转到帖子详情的逻辑
+                  console.log("点击帖子:", thread);
+                }}
               />
             ))
           ) : (
@@ -219,13 +251,18 @@ const PersonalCenter: React.FC = () => {
         </View>
         <View className="cardList gradient-list">
           {askChats.length > 0 ? (
-            askChats.map((card, index) => (
+            askChats.map((chat, index) => (
               <Card
                 key={index}
-                size={card.size}
-                url={card.url}
-                title={card.title}
-                tags={card.tags}
+                size="large"
+                url={chat.imageUrl || "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B2.jpg"}
+                title={chat.subject}
+                tags={Array.isArray(chat.tap) ? chat.tap : []}
+                onClick={() => {
+                  Taro.navigateTo({
+                    url: `/pages/chat/index?chatId=${chat._id}`
+                  });
+                }}
               />
             ))
           ) : (
@@ -245,13 +282,18 @@ const PersonalCenter: React.FC = () => {
         </View>
         <View className="cardList gradient-list">
           {answerChats.length > 0 ? (
-            answerChats.map((card, index) => (
+            answerChats.map((chat, index) => (
               <Card
                 key={index}
-                size={card.size}
-                url={card.url}
-                title={card.title}
-                tags={card.tags}
+                size="large"
+                url={chat.imageUrl || "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B3.jpg"}
+                title={chat.subject}
+                tags={Array.isArray(chat.tap) ? chat.tap : []}
+                onClick={() => {
+                  Taro.navigateTo({
+                    url: `/pages/chat/index?chatId=${chat._id}`
+                  });
+                }}
               />
             ))
           ) : (

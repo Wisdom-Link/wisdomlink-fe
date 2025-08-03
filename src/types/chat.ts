@@ -1,18 +1,28 @@
-export interface Message {
+export type Message = {
   sender: string;
   content: string;
   timestamp: Date;
-}
+};
 
-export interface Chat {
-  _id?: string;
+export type Chat = {
+  _id: string;
+  subject: string;
+  tap: string[];
   imageUrl?: string;
-  questionUserId: string;
-  answerUserId: string;
-  tap?: string;
-  subject?: string;
-  status?: 'ongoing' | 'completed';
-  messages: Message[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+  status: 'ongoing' | 'completed';
+  createdAt: string;
+  updatedAt: string;
+  role: 'questioner' | 'answerer';
+  partnerId: string;
+  messageCount: number;
+};
+
+export type ChatListResponse = {
+  success: boolean;
+  data: Chat[];
+  total: number;
+  filters: {
+    status: string;
+    role: string;
+  };
+};

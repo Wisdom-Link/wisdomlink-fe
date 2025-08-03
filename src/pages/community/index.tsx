@@ -76,12 +76,19 @@ const Community: React.FC = () => {
         {posts.map((post, idx) => (
           <PostCard
             key={idx}
-            avatarUrl={post.userAvatar}
-            name={post.username}
-            time={post.createdAt}
+            userAvatar={post.userAvatar}
+            username={post.username}
+            createdAt={post.createdAt}
             location={post.location}
+            community={post.community}
             content={post.content}
             tags={post.tags}
+            mode="answer"
+            onAnswer={(username) => {
+              Taro.navigateTo({
+                url: `/pages/chat/index?username=${username}&postContent=${post.content}`
+              });
+            }}
           />
         ))}
       </View>
