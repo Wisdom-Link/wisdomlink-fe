@@ -57,7 +57,7 @@ const CurrentPosts: React.FC = () => {
 
         if (username) {
           const userPosts = await getThreadsByUsername(username);
-          setPosts(userPosts);
+          setPosts(userPosts.data);
         } else {
           Taro.showToast({ title: "请先登录", icon: "none" });
         }
@@ -142,9 +142,9 @@ const CurrentPosts: React.FC = () => {
       await updateThread(currentPost._id, updateData);
 
       // 更新本地状态
-      setPosts(prevPosts => 
-        prevPosts.map(post => 
-          post._id === currentPost._id 
+      setPosts(prevPosts =>
+        prevPosts.map(post =>
+          post._id === currentPost._id
             ? { ...post, content: formText, tags: tags }
             : post
         )
@@ -152,7 +152,7 @@ const CurrentPosts: React.FC = () => {
 
       setShowModal(false);
       Taro.showToast({ title: "更新成功", icon: "success" });
-      
+
       // 重置表单状态
       setCurrentPost(null);
       setFormText("");
@@ -160,12 +160,12 @@ const CurrentPosts: React.FC = () => {
       setSelectedThirdTag("");
       setCustomTag("");
       setCustomTag2("");
-      
+
     } catch (error) {
       console.error("更新帖子失败:", error);
-      Taro.showToast({ 
-        title: error?.message || "更新失败", 
-        icon: "none" 
+      Taro.showToast({
+        title: error?.message || "更新失败",
+        icon: "none"
       });
     }
   };

@@ -34,7 +34,7 @@ const MainPage: React.FC = () => {
   };
 
   useEffect(() => {
-
+    // clearUserData();
     if (checkAuth()) {
       // 验证通过后获取用户信息
       fetchAndStoreUserInfo();

@@ -42,11 +42,11 @@ const PersonalCenter: React.FC = () => {
     try {
       // 获取已完成的提问对话（最近4个）
       const questionerChats = await getQuestionerChats('completed');
-      setAskChats(questionerChats.slice(0, 4));
+      setAskChats(questionerChats.data.slice(0, 4));
 
       // 获取已完成的答题对话（最近4个）
       const answererChats = await getAnswererChats('completed');
-      setAnswerChats(answererChats.slice(0, 4));
+      setAnswerChats(answererChats.data.slice(0, 4));
     } catch (error) {
       console.error("获取对话数据失败:", error);
       // 使用空数组作为fallback
@@ -90,7 +90,7 @@ const PersonalCenter: React.FC = () => {
       const storedUserInfo = Taro.getStorageSync("userInfo");
       if (storedUserInfo?.username) {
         const threads = await getThreadsByUsername(storedUserInfo.username);
-        setUserThreads(threads || []);
+        setUserThreads(threads.data || []);
       }
     } catch (error) {
       console.error("获取用户帖子失败:", error);
@@ -220,25 +220,25 @@ const PersonalCenter: React.FC = () => {
           </AtButton>
         </View>
         <View className="cardList gradient-list">
-          {userThreads.length > 0 ? (
+            {userThreads.length > 0 ? (
             userThreads.map((thread, index) => (
               <Card
                 key={thread._id || index}
                 size="large"
                 url={thread.imageUrl || "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%901.jpg"}
                 title={thread.content || "暂无标题"}
-                tags={Array.isArray(thread.tags) ? thread.tags : []}
+                tags={Array.isArray(thread.tags) ? thread.tags.slice(0, 2) : []}
                 onClick={() => {
-                  // 可以添加跳转到帖子详情的逻辑
-                  console.log("点击帖子:", thread);
-                }}
+                // 可以添加跳转到帖子详情的逻辑
+                console.log("点击帖子:", thread);
+              }}
               />
             ))
-          ) : (
+            ) : (
             <View style={{ padding: "40rpx", textAlign: "center", color: "#999" }}>
               暂无现有问题
             </View>
-          )}
+            )}
           <View className="list-gradient-mask" />
         </View>
       </View>

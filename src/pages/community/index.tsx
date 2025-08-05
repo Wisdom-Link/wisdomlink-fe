@@ -1,6 +1,6 @@
 /* eslint-disable jsx-quotes */
-import React, { useState, useEffect } from "react";
-import Taro from "@tarojs/taro";
+import React, { useState } from "react";
+import Taro, { useDidShow } from "@tarojs/taro";
 import { View, ScrollView } from "@tarojs/components";
 import Card from "../../components/Card";
 import PostCard from "../../components/PostCard";
@@ -19,7 +19,7 @@ const Community: React.FC = () => {
   };
 
   // 获取随机帖子作为热门问题
-  useEffect(() => {
+  useDidShow(() => {
     const fetchRandomPosts = async () => {
       try {
         const randomPosts = await getRandomThreads(10); // 获取10个随机帖子
@@ -32,7 +32,7 @@ const Community: React.FC = () => {
     };
 
     fetchRandomPosts();
-  }, []);
+  });
 
   // 按 size 分类的 Card 数据
   const smallCards = [

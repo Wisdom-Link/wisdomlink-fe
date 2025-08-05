@@ -41,18 +41,22 @@ export const updateThread = async (threadId: string, updateData: {
   try {
     // 获取当前用户信息
     const userInfo = Taro.getStorageSync("userInfo");
-    const requestUsername = userInfo?.username;
+    const username = userInfo?.username;
+    const token = Taro.getStorageSync('token');
 
-    if (!requestUsername) {
-      throw new Error('用户未登录');
+    if (!username || !token) {
+      throw new Error('用户未登录或缺少token');
     }
 
     const response = await request({
-      url: `/api/threads/${threadId}`,
+      url: `/thread/updateThread/${threadId}`,
       method: 'PUT',
       data: {
         ...updateData,
-        requestUsername
+        username
+      },
+      header: {
+        Authorization: `Bearer ${token}`
       }
     });
 
