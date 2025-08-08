@@ -5,6 +5,7 @@ import { View, Button, Text } from "@tarojs/components";
 import { AtTabs } from "taro-ui";
 import { getQuestionerChats, getAnswererChats } from "../../apis/chat";
 import { Chat } from "../../types/chat";
+import { getRandomPictureByCommunity } from "../../utils/getRandomPicture"
 import "./index.scss";
 
 const tabList = [{ title: "提问对话" }, { title: "答题对话" }];
@@ -25,8 +26,14 @@ const ChatList: React.FC = () => {
         getAnswererChats('ongoing')    // 获取用户作为回答者的正在进行对话
       ]);
 
-      setQuestionerChats(questionerData);
-      setAnswererChats(answererData);
+      // 确保数据存在且是数组
+      const questionerChatsData = Array.isArray(questionerData) ? questionerData :
+                              (questionerData?.data && Array.isArray(questionerData.data)) ? questionerData.data : [];
+      const answererChatsData = Array.isArray(answererData) ? answererData :
+                            (answererData?.data && Array.isArray(answererData.data)) ? answererData.data : [];
+
+      setQuestionerChats(questionerChatsData);
+      setAnswererChats(answererChatsData);
     } catch (error) {
       console.error("获取对话数据失败:", error);
       Taro.showToast({ title: "获取数据失败", icon: "none" });
@@ -43,17 +50,6 @@ const ChatList: React.FC = () => {
 
   // 根据标签页切换数据
   const chatList = current === 0 ? questionerChats : answererChats;
-
-  // 获取默认背景图
-  const getDefaultBackground = (index: number) => {
-    const defaultImages = [
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%81%A5%E8%BA%AB/%E5%81%A5%E8%BA%AB1.jpg",
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B1.jpg",
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%97%85%E6%B8%B8/%E6%97%85%E6%B8%B82.jpeg",
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%8C%BB%E7%96%97/%E5%8C%BB%E7%96%973.jpg",
-    ];
-    return defaultImages[index % defaultImages.length];
-  };
 
   return (
     <View className="page">
@@ -75,22 +71,22 @@ const ChatList: React.FC = () => {
       ) : (
         <View className="chat-list">
           {chatList.length > 0 ? (
-            chatList.map((item, index) => (
+            chatList.map((item) => (
               <View key={item._id} className="chat-card">
                 {/* 左侧背景图片 */}
                 <View
                   className="chat-card-bg"
                   style={{
-                    background: `url(${item.imageUrl || getDefaultBackground(index)}) center/cover no-repeat`,
+                    background: `url(${getRandomPictureByCommunity(item.community)} center/cover no-repeat`,
                   }}
                 />
                 {/* 中间标题和标签 */}
                 <View className="chat-content">
                   <View className="item-title">
-                    {item.subject}
+                    {item.content}
                   </View>
                   <View className="tags-container">
-                    {Array.isArray(item.tap) && item.tap.map((tag, idx) => (
+                    {Array.isArray(item.taps) && item.taps.map((tag, idx) => (
                       <Text key={idx} className="tag">
                         {tag}
                       </Text>

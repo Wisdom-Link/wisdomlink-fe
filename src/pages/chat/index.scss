@@ -58,49 +58,23 @@
         .card-title {
           font-size: 40rpx;
           margin: 25rpx 0 20rpx 0;
-          color:rgb(0, 0, 0)
+          color: rgb(0, 0, 0);
         }
 
         .text {
           font-size: 30rpx;
-          color:#222;
+          color: #222;
         }
       }
-    }
-
-    .down {
-      height: 25%;
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-
-     .down-text {
-        width:20%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30rpx bold;
-     }
-     .btn{
-        margin: 10rpx;
-        background-color: rgb(92, 87, 87);
-        color: #ffffff;
-        padding: 4px 20px; // 调整内边距
-        border-radius: 30px; // 调整圆角半径
-        font-size: 20rpx; // 调整字体大小
-     }
     }
   }
 }
 
-.chatList{
+.chatList {
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding:20rpx 5% 200rpx 5%;
+  padding: 20rpx 5% 200rpx 5%;
   gap: 20rpx; /* 消息间距 */
 
   .ai {
@@ -116,7 +90,7 @@
     color: #222;
     padding: 18rpx 26rpx;
     font-size: 28rpx;
-    box-shadow: 0 6rpx 16rpx 0 rgba(97,144,232,0.12); /* 加重阴影 */
+    box-shadow: 0 6rpx 16rpx 0 rgba(97, 144, 232, 0.12); /* 加重阴影 */
 
     // QQ气泡左侧小三角
     &::before {
@@ -158,9 +132,26 @@
       height: 0;
       border-top: 16rpx solid transparent;
       border-bottom: 16rpx solid transparent;
-      border-left: 18rpx solid rgb(0,153,255);
+      border-left: 18rpx solid rgb(0, 153, 255);
     }
   }
+}
+
+// 添加用户名标签样式
+.username-label {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+  padding: 0 40rpx;
+}
+
+.current-user-label {
+  text-align: right;
+  margin-right: 10%;
+}
+
+.other-user-label {
+  text-align: left;
 }
 
 .input-container {
@@ -215,4 +206,80 @@
   border-radius: 24rpx;
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.original-question {
+  margin: 20px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+
+  .question-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .question-content {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .question-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    .tag {
+      padding: 4px 8px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+  }
+}
+
+.no-messages {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+
+  .text {
+    font-size: 16px;
+  }
+}
+
+  .question-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    .tag {
+      padding: 4px 8px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+  }
+
+
+.no-messages {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+
+  .text {
+    font-size: 16px;
+  }
+}
+
+.send-button:disabled {
+  background-color: #ccc !important;
+  color: #999 !important;
 }

@@ -1,63 +1,244 @@
 /* eslint-disable jsx-quotes */
-import { useState} from "react";
-import Taro ,{ useDidShow } from "@tarojs/taro";
+import { useState, useEffect } from "react";
+import Taro, { useDidShow, getCurrentInstance } from "@tarojs/taro";
 import { View, Image, Button, Input } from "@tarojs/components";
+import ChatExitModal from "../../components/ChatExitModal";
+import { ChatMessage,ChatData,updateChatStatus, addMessageToChat, getChatById, saveChat } from "../../apis/chat";
+import { deleteThreadById } from "../../apis/thread";
 import "./index.scss";
 
-interface ChatItem {
-  type: string;
-  content: string;
-}
 
-const chatData: ChatItem[] = [
-  { type: "user", content: "我是华中师范大学23级统计学的一名学生，从就业方向的角度来看，如果我想要考公务员，我有没有必要先去去读研呢？如果读研的话，我应该是选择应用统计、经济统计还是医学统计方向更好呢？" },
-  {
-    type: "ai",
-    content: `是否需要先读研究生这个问题，其实取决于你的个人情况和职业规划。对于考公务员来说，研究生学历通常会给你的竞争力带来一定的加分，特别是在一些较为竞争激烈的职位中。此外，研究生阶段也能够让你深入学习和研究统计学的相关内容，为将来的公务员考试积累更多的知识和经验。
-
-至于选择专业方向，应用统计、经济统计还是医学统计，这要根据你的兴趣和职业发展方向来决定。如果你对数据在经济或医学领域的应用感兴趣，那么选择经济统计或医学统计可能更贴合你的兴趣和未来就业方向。应用统计则更为广泛，涵盖了多个领域的数据分析和应用。
-
-最终的选择应该结合你的个人兴趣和职业规划，考虑未来的发展方向以及各个专业方向的就业市场需求。`,
-  },
-  { type: "user", content: "我不太想去读研，太卷了。" },
-  {
-    type: "ai",
-    content:
-      `懂你！现在读研确实挺“卷”的，特别是统计学这种专业，不管是考研还是就业，大家都很努力。如果你不太想读研，完全可以把精力集中在准备公务员考试（国考、省考）或者事业单位这条路上，也一样有出路，而且并不代表你的选择就“差”。`,
-  },
-  { type: "user", content: "政治选择题总是错，有什么建议吗？" },
-  {
-    type: "ai",
-    content:
-      "政治选择题要多做题，掌握时政热点，理解教材原理，遇到模棱两可的选项时要结合教材内容分析。",
-  },
-  { type: "user", content: "考研复习时间怎么安排比较合理？" },
-  {
-    type: "ai",
-    content:
-      "建议制定详细的复习计划，合理分配各科时间，保持每天的学习节奏，注意劳逸结合，适当锻炼身体。",
-  },
-  { type: "user", content: "复试一般会问哪些问题？" },
-  {
-    type: "ai",
-    content:
-      "复试常见问题包括自我介绍、专业课知识、科研经历、未来规划等，建议提前准备并多加练习。",
-  },
-];
 
 const ChatPage: React.FC = () => {
   const [input, setInput] = useState("");
-  const inputChange = (value) => {
-    setInput(value);
-  };
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [userRole, setUserRole] = useState<'questioner' | 'answerer'>('questioner');
+  const [chatId, setChatId] = useState<string>('');
+  const [chatData, setChatData] = useState<ChatData | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isNewChat, setIsNewChat] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
 
   useDidShow(() => {
-    const params = Taro.getStorageSync('chatID');
-    console.log("接收到的参数：", params);
-    // 用完可以清除
-    Taro.removeStorageSync('chatID');
+    const router = getCurrentInstance().router;
+    const params = router?.params;
+
+    // 获取当前用户信息
+    const userInfo = Taro.getStorageSync('userInfo');
+    setCurrentUser(userInfo);
+
+    if (params?.chatId) {
+      // 继续已有对话
+      setChatId(params.chatId);
+      setIsNewChat(false);
+      loadExistingChat(params.chatId, userInfo.username);
+    } else if (params?.username && params?.postContent) {
+      // 初次创建对话
+      setIsNewChat(true);
+      const postTags = params.postTags ? params.postTags.split(',') : [];
+      createNewChat(userInfo.username, params.username, params.postContent, postTags);
+    }
   });
 
+  // 加载已有对话
+  const loadExistingChat = async (chatIdParam: string, currentUsername: string) => {
+    try {
+      setLoading(true);
+      const chat = await getChatById(chatIdParam);
+      setChatData(chat);
+      setMessages(chat.messages || []);
+
+      // 判断用户角色
+      if (chat.questionUsername === currentUsername) {
+        setUserRole('questioner');
+      } else if (chat.answerUsername === currentUsername) {
+        setUserRole('answerer');
+      }
+    } catch (error) {
+      console.error('加载对话失败:', error);
+      Taro.showToast({ title: '加载对话失败', icon: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 创建新对话
+  const createNewChat = async (currentUsername: string, partnerUsername: string, content: string, tags: string[]) => {
+    try {
+      setLoading(true);
+
+      // 创建新对话数据
+      const newChatData: ChatData = {
+        questionUsername: currentUsername,
+        answerUsername: partnerUsername,
+        content: content,
+        tags: tags,
+        status: 'ongoing',
+        messages: []
+      };
+
+      const savedChat = await saveChat(newChatData);
+      setChatId(savedChat._id);
+      setChatData(savedChat);
+      setMessages([]);
+      setUserRole('questioner');
+
+      // 删除原始帖子（如果有帖子ID的话）
+      const router = getCurrentInstance().router;
+      const postId = router?.params?.postId;
+      if (postId) {
+        try {
+          await deleteThreadById(postId);
+        } catch (error) {
+          console.warn('删除帖子失败:', error);
+        }
+      }
+
+      Taro.showToast({ title: '对话创建成功', icon: 'success' });
+    } catch (error) {
+      console.error('创建对话失败:', error);
+      Taro.showToast({ title: '创建对话失败', icon: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 发送消息
+  const sendMessage = async () => {
+    if (!input.trim() || !chatId || !currentUser) {
+      return;
+    }
+
+    const messageContent = input.trim();
+    const tempMessage: ChatMessage = {
+      senderId: currentUser.id || '',
+      senderUsername: currentUser.username,
+      content: messageContent,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      // 立即更新UI
+      setMessages(prev => [...prev, tempMessage]);
+      setInput('');
+
+      // 发送到后端
+      const response = await addMessageToChat(chatId, messageContent);
+      
+      // 如果后端返回了最新消息，可以用来同步
+      if (response?.data?.lastMessage) {
+        setMessages(prev => {
+          const newMessages = [...prev];
+          // 替换最后一条消息为服务器返回的版本
+          newMessages[newMessages.length - 1] = {
+            senderId: response.data.lastMessage.senderId,
+            senderUsername: response.data.lastMessage.senderUsername,
+            content: response.data.lastMessage.content,
+            timestamp: response.data.lastMessage.timestamp
+          };
+          return newMessages;
+        });
+      }
+
+    } catch (error: any) {
+      console.error('发送消息失败:', error);
+      
+      // 根据错误类型显示不同提示
+      if (error.message?.includes('对话已结束')) {
+        Taro.showToast({ title: '对话已结束，无法发送消息', icon: 'none' });
+      } else if (error.message?.includes('无权限')) {
+        Taro.showToast({ title: '没有权限发送消息', icon: 'none' });
+      } else {
+        Taro.showToast({ title: '发送失败，请重试', icon: 'error' });
+      }
+
+      // 发送失败时回滚UI
+      setMessages(prev => prev.slice(0, -1));
+      setInput(messageContent);
+    }
+  };
+
+  // 监听返回按钮
+  useEffect(() => {
+    const handleBack = () => {
+      if (userRole === 'questioner') {
+        setShowExitModal(true);
+        return false; // 阻止默认返回行为
+      }
+      return true; // 允许正常返回
+    };
+
+    // 注册返回事件监听
+    Taro.eventCenter.on('onBackPress', handleBack);
+
+    return () => {
+      Taro.eventCenter.off('onBackPress', handleBack);
+    };
+  }, [userRole]);
+
+  // 处理暂时退出
+  const handleTempExit = () => {
+    Taro.navigateBack();
+  };
+
+  // 处理结束对话
+  const handleEndChat = async (rating?: string) => {
+    try {
+      if (chatId) {
+        await updateChatStatus(chatId, 'completed');
+        Taro.showToast({
+          title: '对话已结束',
+          icon: 'success'
+        });
+      }
+
+      if (rating) {
+        // 这里可以调用评分API
+        console.log('用户评分:', rating);
+        Taro.showToast({
+          title: `感谢您的"${rating}"评价`,
+          icon: 'success'
+        });
+      }
+
+      Taro.navigateBack();
+    } catch (error) {
+      console.error('结束对话失败:', error);
+      Taro.showToast({
+        title: '操作失败',
+        icon: 'error'
+      });
+    }
+  };
+
+  // 渲染消息
+  const renderMessage = (message: ChatMessage, index: number) => {
+    const isCurrentUser = message.senderUsername === currentUser?.username;
+    return (
+      <View key={index}>
+        {/* 显示发送者用户名 */}
+        <View className={`username-label ${isCurrentUser ? 'current-user-label' : 'other-user-label'}`}>
+          {message.senderUsername}
+        </View>
+        {/* 使用原有的气泡样式 */}
+        <View className={isCurrentUser ? "user" : "ai"}>
+          {message.content}
+        </View>
+      </View>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View className="page">
+        <View style={{ textAlign: 'center', padding: '100px 20px', color: '#999' }}>
+          加载中...
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View className="page">
@@ -70,27 +251,66 @@ const ChatPage: React.FC = () => {
               </View>
               <View className="contents">
                 <View className="card-title">哈喽~</View>
-                <View className="text">我是解答员小红同学, 很高兴为您服务</View>
+                <View className="text">
+                  {userRole === 'questioner' ?
+                    `我是解答员${chatData?.answerUsername || '小红同学'}, 很高兴为您服务` :
+                    `您正在为${chatData?.questionUsername || '提问者'}解答问题`
+                  }
+                </View>
               </View>
             </View>
           </View>
         </View>
-        {chatData.map((item, index) => (
-          <View key={index} className={`${item.type}`}>
-            {item.content}
+
+        {/* 显示原始问题（仅新对话时显示） */}
+        {isNewChat && chatData?.content && (
+          <View className="original-question">
+            <View className="question-label">原始问题：</View>
+            <View className="question-content">{chatData.content}</View>
+            {chatData.tags && chatData.tags.length > 0 && (
+              <View className="question-tags">
+                {chatData.tags.map((tag, idx) => (
+                  <View key={idx} className="tag">{tag}</View>
+                ))}
+              </View>
+            )}
           </View>
-        ))}
+        )}
+
+        {/* 消息列表 */}
+        {messages.map((message, index) => renderMessage(message, index))}
+
+        {/* 如果没有消息且不是新对话，显示提示 */}
+        {messages.length === 0 && !isNewChat && (
+          <View className="no-messages">
+            <View className="text">开始您的对话吧~</View>
+          </View>
+        )}
       </View>
+
       <View className="input-container">
         <Input
           value={input}
           className="input-box"
           placeholder="请输入内容..."
           onInput={e => setInput(e.detail.value)}
-          focus={false} // 改为 true 可自动弹出输入法
+          focus={false}
         />
-        <Button className="send-button">发送</Button>
+        <Button
+          className="send-button"
+          onClick={sendMessage}
+          disabled={!input.trim()}
+        >
+          发送
+        </Button>
       </View>
+
+      <ChatExitModal
+        visible={showExitModal}
+        onClose={() => setShowExitModal(false)}
+        onTempExit={handleTempExit}
+        onEndChat={handleEndChat}
+      />
     </View>
   );
 };

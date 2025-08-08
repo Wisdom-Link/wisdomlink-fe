@@ -5,6 +5,7 @@ import { View, Button, Text } from "@tarojs/components";
 import { AtTabs } from "taro-ui";
 import { getQuestionerChats, getAnswererChats } from "../../apis/chat";
 import { Chat } from "../../types/chat";
+import { getRandomPictureByCommunity } from "../../utils/getRandomPicture"
 import "./index.scss";
 
 const tabList = [{ title: "提问对话" }, { title: "答题对话" }];
@@ -51,16 +52,6 @@ const ChatHistory: React.FC = () => {
     });
   };
 
-  // 获取默认背景图
-  const getDefaultBackground = (index: number) => {
-    const defaultImages = [
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%81%A5%E8%BA%AB/%E5%81%A5%E8%BA%AB1.jpg",
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B1.jpg",
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%97%85%E6%B8%B8/%E6%97%85%E6%B8%B82.jpeg",
-      "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E5%8C%BB%E7%96%97/%E5%8C%BB%E7%96%973.jpg",
-    ];
-    return defaultImages[index % defaultImages.length];
-  };
 
   return (
     <View className="page">
@@ -82,22 +73,22 @@ const ChatHistory: React.FC = () => {
       ) : (
         <View className="chat-list">
           {chatList.length > 0 ? (
-            chatList.map((item, index) => (
+            chatList.map((item ) => (
               <View key={item._id} className="chat-card">
                 {/* 左侧背景图片 */}
                 <View
                   className="chat-card-bg"
                   style={{
-                    background: `url(${item.imageUrl || getDefaultBackground(index)}) center/cover no-repeat`,
+                    background: `url(${getRandomPictureByCommunity(item.community)}) center/cover no-repeat`,
                   }}
                 />
                 {/* 中间标题和标签 */}
                 <View className="chat-content">
                   <View className="item-title">
-                    {item.subject}
+                    {item.content}
                   </View>
                   <View className="tags-container">
-                    {Array.isArray(item.tap) && item.tap.map((tag, idx) => (
+                    {Array.isArray(item.taps) && item.taps.map((tag, idx) => (
                       <Text key={idx} className="tag">
                         {tag}
                       </Text>

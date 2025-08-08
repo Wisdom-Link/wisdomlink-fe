@@ -12,8 +12,20 @@ export const getThreadByContent = (content: string) =>
   request({ url: `${API_PREFIX}/getThreadByContent?content=${content}`, method: 'GET' })
 
 // 根据ID删除帖子
-export const deleteThreadById = (_id: string) =>
-  request({ url: `${API_PREFIX}/deleteThreadById?_id=${_id}`, method: 'DELETE' })
+export const deleteThreadById = (_id: string) => {
+  const token = Taro.getStorageSync('token');
+  return request({
+    url: `${API_PREFIX}/deleteThreadById`,
+    method: 'DELETE',
+    data: { _id },
+    header: token ? {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    } : {
+      'Content-Type': 'application/json'
+    }
+  });
+}
 
 // 根据社区获取帖子
 export const getThreadsByCommunity = (community: string) =>

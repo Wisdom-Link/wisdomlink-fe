@@ -8,9 +8,10 @@ import { getInfo } from "../../apis/user";
 import { getQuestionerChats, getAnswererChats } from "../../apis/chat";
 import { getThreadsByUsername } from "../../apis/thread";
 import { Chat } from "../../types/chat";
+import { getRandomPictureByCommunity } from "../../utils/getRandomPicture"
 import "./index.scss";
 
-const defaultAvatar = "http://szsykcdad.hn-bkt.clouddn.com/avatar/%E9%BB%98%E8%AE%A4123456789.png";
+const defaultAvatar = "http://wisdomlink-img.marswu23.cn/avatar/%E9%BB%98%E8%AE%A4123456789.png";
 
 const PersonalCenter: React.FC = () => {
   const [userInfo, setUserInfo] = useState<{
@@ -42,11 +43,17 @@ const PersonalCenter: React.FC = () => {
     try {
       // 获取已完成的提问对话（最近4个）
       const questionerChats = await getQuestionerChats('completed');
-      setAskChats(questionerChats.data.slice(0, 4));
+      // 确保数据存在且是数组
+      const questionerData = Array.isArray(questionerChats) ? questionerChats :
+                             (questionerChats?.data && Array.isArray(questionerChats.data)) ? questionerChats.data : [];
+      setAskChats(questionerData.slice(0, 4));
 
       // 获取已完成的答题对话（最近4个）
       const answererChats = await getAnswererChats('completed');
-      setAnswerChats(answererChats.data.slice(0, 4));
+      // 确保数据存在且是数组
+      const answererData = Array.isArray(answererChats) ? answererChats :
+                           (answererChats?.data && Array.isArray(answererChats.data)) ? answererChats.data : [];
+      setAnswerChats(answererData.slice(0, 4));
     } catch (error) {
       console.error("获取对话数据失败:", error);
       // 使用空数组作为fallback
@@ -225,7 +232,7 @@ const PersonalCenter: React.FC = () => {
               <Card
                 key={thread._id || index}
                 size="large"
-                url={thread.imageUrl || "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E9%9F%B3%E4%B9%90/%E9%9F%B3%E4%B9%901.jpg"}
+                url={getRandomPictureByCommunity(thread.community)}
                 title={thread.content || "暂无标题"}
                 tags={Array.isArray(thread.tags) ? thread.tags.slice(0, 2) : []}
                 onClick={() => {
@@ -255,9 +262,9 @@ const PersonalCenter: React.FC = () => {
               <Card
                 key={index}
                 size="large"
-                url={chat.imageUrl || "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B2.jpg"}
-                title={chat.subject}
-                tags={Array.isArray(chat.tap) ? chat.tap : []}
+                url={getRandomPictureByCommunity(chat.community)}
+                title={chat.content}
+                tags={Array.isArray(chat.taps) ? chat.taps : []}
                 onClick={() => {
                   Taro.navigateTo({
                     url: `/pages/chat/index?chatId=${chat._id}`
@@ -286,9 +293,9 @@ const PersonalCenter: React.FC = () => {
               <Card
                 key={index}
                 size="large"
-                url={chat.imageUrl || "https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E7%A4%BE%E5%8C%BA/%E9%97%AE%E9%A2%98/%E6%B3%95%E5%BE%8B/%E6%B3%95%E5%BE%8B3.jpg"}
-                title={chat.subject}
-                tags={Array.isArray(chat.tap) ? chat.tap : []}
+                url={getRandomPictureByCommunity(chat.community)}
+                title={chat.content}
+                tags={Array.isArray(chat.taps) ? chat.taps : []}
                 onClick={() => {
                   Taro.navigateTo({
                     url: `/pages/chat/index?chatId=${chat._id}`

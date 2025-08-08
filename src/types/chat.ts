@@ -6,8 +6,9 @@ export type Message = {
 
 export type Chat = {
   _id: string;
-  subject: string;
-  tap: string[];
+  content: string;
+  taps: string[];
+  community: string;
   imageUrl?: string;
   status: 'ongoing' | 'completed';
   createdAt: string;

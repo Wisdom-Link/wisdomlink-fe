@@ -39,19 +39,19 @@ const Community: React.FC = () => {
     {
       id: 1,
       size: "small",
-      url: "http://szsykcdad.hn-bkt.clouddn.com/community/%E5%AD%A6%E4%B8%9A.jpg",
+      url: "http://wisdomlink-img.marswu23.cn/community/%E5%AD%A6%E4%B8%9A.jpg",
       title: "学业",
     },
     {
       id: 2,
       size: "small",
-      url: "http://szsykcdad.hn-bkt.clouddn.com/community/%E5%AE%B6%E5%BA%AD.webp",
+      url: "http://wisdomlink-img.marswu23.cn/community/%E5%AE%B6%E5%BA%AD.webp",
       title: "家庭",
     },
     {
       id: 3,
       size: "small",
-      url: "http://szsykcdad.hn-bkt.clouddn.com/community/%E4%BA%8B%E4%B8%9A.webp",
+      url: "http://wisdomlink-img.marswu23.cn/community/%E4%BA%8B%E4%B8%9A.webp",
       title: "事业",
     },
   ];
@@ -86,7 +86,7 @@ const Community: React.FC = () => {
             mode="answer"
             onAnswer={(username) => {
               Taro.navigateTo({
-                url: `/pages/chat/index?username=${username}&postContent=${post.content}`
+                url: `/pages/chat/index?username=${username}&postContent=${encodeURIComponent(post.content)}&postTags=${encodeURIComponent(post.tags?.join(',') || '')}&postId=${post._id}`
               });
             }}
           />
