@@ -7,9 +7,12 @@ import { ChatMessage,ChatData,updateChatStatus, addMessageToChat, getChatById, s
 import { deleteThreadById } from "../../apis/thread";
 import "./index.scss";
 
-
+// 在组件外添加调试信息
+console.log('chat/index.tsx 文件被加载');
 
 const ChatPage: React.FC = () => {
+  console.log('ChatPage 组件开始初始化');
+
   const [input, setInput] = useState("");
   const [showExitModal, setShowExitModal] = useState(false);
   const [userRole, setUserRole] = useState<'questioner' | 'answerer'>('questioner');
@@ -20,26 +23,56 @@ const ChatPage: React.FC = () => {
   const [isNewChat, setIsNewChat] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
+  console.log('ChatPage state 初始化完成');
 
-  useDidShow(() => {
+  // 使用 useEffect 代替 useDidShow 进行测试
+  useEffect(() => {
+    console.log('useEffect 被调用 - 组件挂载');
+
     const router = getCurrentInstance().router;
     const params = router?.params;
 
+    console.log('路由参数:', params);
+
     // 获取当前用户信息
     const userInfo = Taro.getStorageSync('userInfo');
+    console.log('用户信息:', userInfo);
     setCurrentUser(userInfo);
 
     if (params?.chatId) {
-      // 继续已有对话
+      console.log('进入已有对话分支, chatId:', params.chatId);
       setChatId(params.chatId);
       setIsNewChat(false);
-      loadExistingChat(params.chatId, userInfo.username);
+      loadExistingChat(params.chatId, userInfo?.username);
     } else if (params?.username && params?.postContent) {
-      // 初次创建对话
+      console.log('进入创建新对话分支');
+      console.log('参数检查:', {
+        username: params.username,
+        postContent: params.postContent,
+        postTags: params.postTags,
+        community: params.community
+      });
+
       setIsNewChat(true);
       const postTags = params.postTags ? params.postTags.split(',') : [];
-      createNewChat(userInfo.username, params.username, params.postContent, postTags);
+      const community = params.community || '学业发展';
+
+      console.log('准备调用 createNewChat 函数');
+      createNewChat(userInfo?.username, params.username, params.postContent, postTags, community);
+    } else {
+      console.log('未匹配任何条件分支');
+      console.log('条件检查:', {
+        hasChatId: !!params?.chatId,
+        hasUsername: !!params?.username,
+        hasPostContent: !!params?.postContent
+      });
+      setLoading(false);
     }
+  }, []);
+
+  useDidShow(() => {
+    console.log('useDidShow 被调用');
+    // 暂时注释掉 useDidShow 的逻辑，先用 useEffect 测试
   });
 
   // 加载已有对话
@@ -65,19 +98,59 @@ const ChatPage: React.FC = () => {
   };
 
   // 创建新对话
-  const createNewChat = async (currentUsername: string, partnerUsername: string, content: string, tags: string[]) => {
+  const createNewChat = async (currentUsername: string, partnerUsername: string, content: string, tags: string[], community: string) => {
+    console.log('createNewChat 函数开始执行');
+    console.log('传入参数:', {
+      currentUsername,
+      partnerUsername,
+      content,
+      tags,
+      community
+    });
+
     try {
       setLoading(true);
 
-      // 创建新对话数据
-      const newChatData: ChatData = {
+      // 解码URL参数
+      const decodedContent = decodeURIComponent(content);
+      const decodedTags = tags.map(tag => decodeURIComponent(tag)).filter(tag => tag.trim() !== '');
+      const decodedCommunity = decodeURIComponent(community);
+
+      console.log('解码后的参数:');
+      console.log('currentUsername:', currentUsername);
+      console.log('partnerUsername:', partnerUsername);
+      console.log('decodedContent:', decodedContent);
+      console.log('decodedTags:', decodedTags);
+      console.log('decodedCommunity:', decodedCommunity);
+
+      // 验证必要字段
+      if (!currentUsername || !partnerUsername || !decodedCommunity) {
+        console.error('缺少必要字段:', {
+          currentUsername: !!currentUsername,
+          partnerUsername: !!partnerUsername,
+          community: !!decodedCommunity
+        });
+        throw new Error('缺少必要的用户名或社区信息');
+      }
+
+      // 创建新对话数据 - 添加多种可能的字段名称以兼容后端
+      const newChatData = {
         questionUsername: currentUsername,
         answerUsername: partnerUsername,
-        content: content,
-        tags: tags,
-        status: 'ongoing',
-        messages: []
+        // 兼容字段
+        questionUserId: currentUsername,
+        answerUserId: partnerUsername,
+        content: decodedContent,
+        tags: decodedTags,
+        community: decodedCommunity,
+        // 兼容字段
+        tap: decodedCommunity,
+        subject: decodedContent,
+        status: 'ongoing' as const,
+        messages: [] as ChatMessage[]
       };
+
+      console.log('创建对话数据:', JSON.stringify(newChatData, null, 2));
 
       const savedChat = await saveChat(newChatData);
       setChatId(savedChat._id);
@@ -85,21 +158,21 @@ const ChatPage: React.FC = () => {
       setMessages([]);
       setUserRole('questioner');
 
-      // 删除原始帖子（如果有帖子ID的话）
+      Taro.showToast({ title: '对话创建成功', icon: 'success' });
+
+      // 异步删除原始帖子，不影响对话创建流程
       const router = getCurrentInstance().router;
       const postId = router?.params?.postId;
       if (postId) {
-        try {
-          await deleteThreadById(postId);
-        } catch (error) {
-          console.warn('删除帖子失败:', error);
-        }
+        setTimeout(() => {
+          deleteThreadById(postId).catch(error => {
+            console.warn('删除帖子失败:', error);
+          });
+        }, 1000);
       }
-
-      Taro.showToast({ title: '对话创建成功', icon: 'success' });
     } catch (error) {
       console.error('创建对话失败:', error);
-      Taro.showToast({ title: '创建对话失败', icon: 'error' });
+      Taro.showToast({ title: '创建对话失败，请重试', icon: 'error' });
     } finally {
       setLoading(false);
     }
@@ -126,7 +199,7 @@ const ChatPage: React.FC = () => {
 
       // 发送到后端
       const response = await addMessageToChat(chatId, messageContent);
-      
+
       // 如果后端返回了最新消息，可以用来同步
       if (response?.data?.lastMessage) {
         setMessages(prev => {
@@ -144,7 +217,7 @@ const ChatPage: React.FC = () => {
 
     } catch (error: any) {
       console.error('发送消息失败:', error);
-      
+
       // 根据错误类型显示不同提示
       if (error.message?.includes('对话已结束')) {
         Taro.showToast({ title: '对话已结束，无法发送消息', icon: 'none' });
@@ -160,23 +233,15 @@ const ChatPage: React.FC = () => {
     }
   };
 
-  // 监听返回按钮
-  useEffect(() => {
-    const handleBack = () => {
-      if (userRole === 'questioner') {
-        setShowExitModal(true);
-        return false; // 阻止默认返回行为
-      }
-      return true; // 允许正常返回
-    };
-
-    // 注册返回事件监听
-    Taro.eventCenter.on('onBackPress', handleBack);
-
-    return () => {
-      Taro.eventCenter.off('onBackPress', handleBack);
-    };
-  }, [userRole]);
+  // 处理自定义返回按钮点击
+  const handleCustomBack = () => {
+    console.log('自定义返回按钮被点击, userRole:', userRole);
+    if (userRole === 'questioner') {
+      setShowExitModal(true);
+    } else {
+      Taro.navigateBack();
+    }
+  };
 
   // 处理暂时退出
   const handleTempExit = () => {
@@ -230,7 +295,10 @@ const ChatPage: React.FC = () => {
     );
   };
 
+  console.log('ChatPage 组件渲染, loading:', loading);
+
   if (loading) {
+    console.log('显示加载状态');
     return (
       <View className="page">
         <View style={{ textAlign: 'center', padding: '100px 20px', color: '#999' }}>
@@ -240,8 +308,19 @@ const ChatPage: React.FC = () => {
     );
   }
 
+  console.log('显示正常页面内容');
+
   return (
     <View className="page">
+      {/* 自定义导航栏 */}
+      <View className="custom-navbar">
+        <View className="nav-left" onClick={handleCustomBack}>
+          <View className="back-icon">←</View>
+          <View className="back-text">返回</View>
+        </View>
+        <View className="nav-title">聊天</View>
+      </View>
+
       <View className="chatList">
         <View className="header">
           <View className="card">
@@ -314,5 +393,6 @@ const ChatPage: React.FC = () => {
     </View>
   );
 };
+
 
 export default ChatPage;

@@ -87,18 +87,20 @@ const ChatHistory: React.FC = () => {
                   <View className="item-title">
                     {item.content}
                   </View>
-                  <View className="tags-container">
-                    {Array.isArray(item.taps) && item.taps.map((tag, idx) => (
-                      <Text key={idx} className="tag">
-                        {tag}
-                      </Text>
-                    ))}
+                   <View className="tags-container">
+                    {/* 修复标签数据处理 */}
+                    {(
+                     // 处理逗号分隔的标签字符串
+                      item.tags?.flatMap(tagStr =>
+                        typeof tagStr === 'string' ? tagStr.split(',').map(tag => tag.trim()) : []
+                      ).filter(tag => tag).map((tag, idx) => (
+                        <View key={idx} className="tag">
+                          {tag}
+                        </View>
+                      ))
+                    )}
                   </View>
-                  <View className="chat-status">
-                    <Text className={`status-badge ${item.status}`}>
-                      {item.status === 'ongoing' ? '进行中' : '已完成'}
-                    </Text>
-                  </View>
+
                 </View>
                 {/* 右侧按钮 */}
                 <View className="button-container">

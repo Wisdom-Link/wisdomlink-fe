@@ -77,7 +77,10 @@ const ChatList: React.FC = () => {
                 <View
                   className="chat-card-bg"
                   style={{
-                    background: `url(${getRandomPictureByCommunity(item.community)} center/cover no-repeat`,
+                    backgroundImage: `url(${getRandomPictureByCommunity(item.community)})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
                   }}
                 />
                 {/* 中间标题和标签 */}
@@ -86,16 +89,17 @@ const ChatList: React.FC = () => {
                     {item.content}
                   </View>
                   <View className="tags-container">
-                    {Array.isArray(item.taps) && item.taps.map((tag, idx) => (
-                      <Text key={idx} className="tag">
-                        {tag}
-                      </Text>
-                    ))}
-                  </View>
-                  <View className="chat-status">
-                    <Text className={`status-badge ${item.status}`}>
-                      {item.status === 'ongoing' ? '进行中' : '已完成'}
-                    </Text>
+                    {/* 修复标签数据处理 */}
+                    {(
+                     // 处理逗号分隔的标签字符串
+                      item.tags?.flatMap(tagStr =>
+                        typeof tagStr === 'string' ? tagStr.split(',').map(tag => tag.trim()) : []
+                      ).filter(tag => tag).map((tag, idx) => (
+                        <View key={idx} className="tag">
+                          {tag}
+                        </View>
+                      ))
+                    )}
                   </View>
                 </View>
                 {/* 右侧按钮 */}

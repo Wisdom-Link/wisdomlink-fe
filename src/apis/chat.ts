@@ -16,6 +16,7 @@ export interface ChatData {
   answerUsername: string;
   content: string;
   tags: string[];
+  community: string; // 添加社区字段
   status: 'ongoing' | 'completed';
   messages: ChatMessage[];
 }
@@ -28,8 +29,23 @@ export const AIchat = (messages: any[]) =>
 export const getChat = (_id: string) =>
   request({ url: `${API_PREFIX}/getChat?_id=${_id}`, method: 'GET' })
 
-export const saveChat = (data: any) =>
-  request({ url: `${API_PREFIX}/saveChat`, method: 'POST', data })
+export const saveChat = (data: ChatData) => {
+  console.log('saveChat 发送的数据:', JSON.stringify(data, null, 2));
+
+  const token = Taro.getStorageSync('token');
+
+  return request({
+    url: `${API_PREFIX}/saveChat`,
+    method: 'POST',
+    data,
+    header: token ? {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    } : {
+      'Content-Type': 'application/json'
+    }
+  });
+};
 
 export const getChatById = (_id: string) =>
   request({ url: `${API_PREFIX}/getChatById?_id=${_id}`, method: 'GET' })

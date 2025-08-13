@@ -67,7 +67,7 @@ const SearchResult: React.FC = () => {
                 mode="answer"
                 onAnswer={(username) => {
                   Taro.navigateTo({
-                    url: `/pages/chat/index?username=${username}&postContent=${encodeURIComponent(post.content)}&postTags=${encodeURIComponent(post.tags?.join(',') || '')}&postId=${post._id}`
+                    url: `/pages/chat/index?username=${username}&postContent=${encodeURIComponent(post.content)}&postTags=${encodeURIComponent(post.tags?.join(',') || '')}&postId=${post._id}&community=${encodeURIComponent(post.community || '学业发展')}`
                   });
                 }}
               />
