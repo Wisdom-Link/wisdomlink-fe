@@ -20,6 +20,18 @@ const Card: React.FC<CardProps> = ({
   tags = [],
   onClick
 }) => {
+  // 处理标签数据，确保正确分割
+  const processTags = (tagsInput: string[]) => {
+    if (!Array.isArray(tagsInput) || tagsInput.length === 0) {
+      return [];
+    }
+
+    // 将逗号分隔的字符串拆分为独立标签
+    return tagsInput.flatMap(tag =>
+      typeof tag === 'string' ? tag.split(',').map(t => t.trim()) : []
+    ).filter(tag => tag);
+  };
+
   switch (size) {
     case "small":
       return (
@@ -43,6 +55,8 @@ const Card: React.FC<CardProps> = ({
       );
 
     case "large":
+      const processedTags = processTags(tags);
+
       return (
         <View
           className="card-large"
@@ -62,10 +76,10 @@ const Card: React.FC<CardProps> = ({
             <View className="title-large">
               <Text>{title}</Text>
             </View>
-            <View className="text-large">
-              {tags && tags.length > 0
-                ? tags.map(tag => (
-                    <AtTag key={tag} size="small" style={{ marginRight: "10rpx" }}>
+            <View className="text-large" style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              {processedTags.length > 0
+                ? processedTags.map((tag, index) => (
+                    <AtTag key={`${tag}-${index}`} size="small">
                       {tag}
                     </AtTag>
                   ))
@@ -75,6 +89,9 @@ const Card: React.FC<CardProps> = ({
           </View>
         </View>
       );
+
+    default:
+      return null;
   }
 };
 

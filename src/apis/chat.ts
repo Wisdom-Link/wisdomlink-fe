@@ -47,8 +47,8 @@ export const saveChat = (data: ChatData) => {
   });
 };
 
-export const getChatById = (_id: string) =>
-  request({ url: `${API_PREFIX}/getChatById?_id=${_id}`, method: 'GET' })
+export const getChatWithDetails = (_id: string) =>
+  request({ url: `${API_PREFIX}/getChatWithDetails?chatId=${_id}`, method: 'GET' })
 
 export const searchChat = (q: string) =>
   request({ url: `${API_PREFIX}/searchChat?q=${q}`, method: 'GET' })
@@ -171,6 +171,33 @@ export const addMessageToChat = async (chatId: string, content: string) => {
     return response.data;
   } catch (error) {
     console.error('发送消息失败:', error);
+    throw error;
+  }
+};
+
+// 评价用户
+export const evaluateUser = async (username: string, rating: 'excellent' | 'average' | 'poor') => {
+  try {
+    const token = Taro.getStorageSync('token');
+    if (!token) {
+      throw new Error('用户未登录');
+    }
+
+    const response = await request({
+      url: `${API_PREFIX}/evaluateUser`,
+      method: 'POST',
+      data: {
+        username,
+        rating
+      },
+      header: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('评价用户失败:', error);
     throw error;
   }
 };

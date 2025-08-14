@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Taro, { useDidShow, getCurrentInstance } from "@tarojs/taro";
 import { View, Image, Button, Input } from "@tarojs/components";
 import ChatExitModal from "../../components/ChatExitModal";
-import { ChatMessage,ChatData,updateChatStatus, addMessageToChat, getChatById, saveChat } from "../../apis/chat";
+import { ChatMessage,ChatData,updateChatStatus, addMessageToChat, getChatWithDetails, saveChat, evaluateUser } from "../../apis/chat";
 import { deleteThreadById } from "../../apis/thread";
 import "./index.scss";
 
@@ -68,20 +68,71 @@ const ChatPage: React.FC = () => {
       });
       setLoading(false);
     }
+
+    // 获取系统信息，动态设置导航栏高度
+    Taro.getSystemInfo({
+      success: (res) => {
+        const statusBarHeight = res.statusBarHeight || 0;
+        const navbarHeight = statusBarHeight + 44; // 状态栏高度 + 导航栏内容高度
+
+        // 动态设置导航栏样式
+        const navbar = document.querySelector('.custom-navbar') as HTMLElement;
+        if (navbar) {
+          navbar.style.paddingTop = `${statusBarHeight}px`;
+          navbar.style.height = `${navbarHeight}px`;
+        }
+
+        // 调整内容区域的 padding-top
+        const chatList = document.querySelector('.chatList') as HTMLElement;
+        if (chatList) {
+          chatList.style.paddingTop = `${navbarHeight}px`;
+        }
+      }
+    });
   }, []);
 
   useDidShow(() => {
     console.log('useDidShow 被调用');
-    // 暂时注释掉 useDidShow 的逻辑，先用 useEffect 测试
+
+    // 设置页面标题
+    Taro.setNavigationBarTitle({ title: '聊天' });
+
+    // 如果是提问者，监听页面返回事件
+    if (userRole === 'questioner') {
+      // 获取当前页面实例
+      const pages = Taro.getCurrentPages();
+      const currentPage = pages[pages.length - 1];
+
+      if (currentPage) {
+        // 重写页面的 onBackPress 方法（如果存在）
+        if (typeof currentPage.onBackPress === 'function' || !currentPage.onBackPress) {
+          const originalOnBackPress = currentPage.onBackPress;
+
+          currentPage.onBackPress = function() {
+            console.log('返回按钮被点击, userRole:', userRole);
+
+            if (userRole === 'questioner') {
+              setShowExitModal(true);
+              return true; // 阻止默认返回行为
+            }
+
+            if (originalOnBackPress) {
+              return originalOnBackPress.call(this);
+            }
+            return false; // 允许正常返回
+          };
+        }
+      }
+    }
   });
 
   // 加载已有对话
   const loadExistingChat = async (chatIdParam: string, currentUsername: string) => {
     try {
       setLoading(true);
-      const chat = await getChatById(chatIdParam);
-      setChatData(chat);
-      setMessages(chat.messages || []);
+      const chat = await getChatWithDetails(chatIdParam);
+      setChatData(chat.data);
+      setMessages(chat.data.messages || []);
 
       // 判断用户角色
       if (chat.questionUsername === currentUsername) {
@@ -133,18 +184,15 @@ const ChatPage: React.FC = () => {
         throw new Error('缺少必要的用户名或社区信息');
       }
 
-      // 创建新对话数据 - 添加多种可能的字段名称以兼容后端
+      // 创建新对话数据
       const newChatData = {
         questionUsername: currentUsername,
         answerUsername: partnerUsername,
-        // 兼容字段
         questionUserId: currentUsername,
         answerUserId: partnerUsername,
         content: decodedContent,
         tags: decodedTags,
         community: decodedCommunity,
-        // 兼容字段
-        tap: decodedCommunity,
         subject: decodedContent,
         status: 'ongoing' as const,
         messages: [] as ChatMessage[]
@@ -160,7 +208,7 @@ const ChatPage: React.FC = () => {
 
       Taro.showToast({ title: '对话创建成功', icon: 'success' });
 
-      // 异步删除原始帖子，不影响对话创建流程
+      // 异步删除原始帖子
       const router = getCurrentInstance().router;
       const postId = router?.params?.postId;
       if (postId) {
@@ -233,16 +281,6 @@ const ChatPage: React.FC = () => {
     }
   };
 
-  // 处理自定义返回按钮点击
-  const handleCustomBack = () => {
-    console.log('自定义返回按钮被点击, userRole:', userRole);
-    if (userRole === 'questioner') {
-      setShowExitModal(true);
-    } else {
-      Taro.navigateBack();
-    }
-  };
-
   // 处理暂时退出
   const handleTempExit = () => {
     Taro.navigateBack();
@@ -252,20 +290,51 @@ const ChatPage: React.FC = () => {
   const handleEndChat = async (rating?: string) => {
     try {
       if (chatId) {
+        // 调用 updateChatStatus 接口更新对话状态为已完成
         await updateChatStatus(chatId, 'completed');
         Taro.showToast({
           title: '对话已结束',
           icon: 'success'
         });
+        
+        // 更新本地状态
+        setChatData(prev => prev ? { ...prev, status: 'completed' } : prev);
       }
 
-      if (rating) {
-        // 这里可以调用评分API
-        console.log('用户评分:', rating);
-        Taro.showToast({
-          title: `感谢您的"${rating}"评价`,
-          icon: 'success'
-        });
+      if (rating && chatData?.answerUsername) {
+        try {
+          // 映射评价等级
+          let ratingValue: 'excellent' | 'average' | 'poor';
+          switch (rating) {
+            case '满意':
+              ratingValue = 'excellent';
+              break;
+            case '及格':
+              ratingValue = 'average';
+              break;
+            case '差劲':
+              ratingValue = 'poor';
+              break;
+            default:
+              ratingValue = 'average';
+          }
+          
+          // 调用评价接口
+          await evaluateUser(chatData.answerUsername, ratingValue);
+          
+          console.log('用户评价:', { username: chatData.answerUsername, rating: ratingValue });
+          Taro.showToast({
+            title: `感谢您的"${rating}"评价`,
+            icon: 'success'
+          });
+        } catch (evaluateError) {
+          console.error('评价提交失败:', evaluateError);
+          // 评价失败不影响对话结束，只显示警告
+          Taro.showToast({
+            title: '评价提交失败，但对话已结束',
+            icon: 'none'
+          });
+        }
       }
 
       Taro.navigateBack();
@@ -277,6 +346,24 @@ const ChatPage: React.FC = () => {
       });
     }
   };
+
+  // 处理自定义返回按钮点击
+  const handleBackClick = () => {
+    console.log('自定义返回按钮被点击, userRole:', userRole, 'status:', chatData?.status);
+    // 如果对话已完成，直接返回不显示弹窗
+    if (chatData?.status === 'completed') {
+      Taro.navigateBack();
+      return;
+    }
+
+    // 如果是提问者且对话正在进行，显示退出弹窗
+    if (userRole === 'questioner') {
+      setShowExitModal(true);
+    } else {
+      Taro.navigateBack();
+    }
+  };
+
 
   // 渲染消息
   const renderMessage = (message: ChatMessage, index: number) => {
@@ -312,29 +399,24 @@ const ChatPage: React.FC = () => {
 
   return (
     <View className="page">
+      <View style={{ padding: '30px', backgroundColor: '#f5f5f5' }}></View>
       {/* 自定义导航栏 */}
       <View className="custom-navbar">
-        <View className="nav-left" onClick={handleCustomBack}>
-          <View className="back-icon">←</View>
-          <View className="back-text">返回</View>
+        <View className="nav-left" onClick={handleBackClick}>
+          <View className="back-icon">‹</View>
         </View>
         <View className="nav-title">聊天</View>
+        <View className="nav-right"></View>
       </View>
 
       <View className="chatList">
         <View className="header">
           <View className="card">
             <View className="up">
-              <View className="picture">
-                <Image className="card-icon" src="https://wisdomlink.oss-cn-wuhan-lr.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF/%E5%A4%B4%E5%83%8F/%E5%B0%8F%E7%BA%A2%E5%90%8C%E5%AD%A6.jpeg"></Image>
-              </View>
               <View className="contents">
-                <View className="card-title">哈喽~</View>
+                <View className="card-title">问题内容</View>
                 <View className="text">
-                  {userRole === 'questioner' ?
-                    `我是解答员${chatData?.answerUsername || '小红同学'}, 很高兴为您服务` :
-                    `您正在为${chatData?.questionUsername || '提问者'}解答问题`
-                  }
+                  {chatData?.content || '正在加载问题内容...'}
                 </View>
               </View>
             </View>
@@ -362,27 +444,29 @@ const ChatPage: React.FC = () => {
         {/* 如果没有消息且不是新对话，显示提示 */}
         {messages.length === 0 && !isNewChat && (
           <View className="no-messages">
-            <View className="text">开始您的对话吧~</View>
           </View>
         )}
       </View>
 
-      <View className="input-container">
-        <Input
-          value={input}
-          className="input-box"
-          placeholder="请输入内容..."
-          onInput={e => setInput(e.detail.value)}
-          focus={false}
-        />
-        <Button
-          className="send-button"
-          onClick={sendMessage}
-          disabled={!input.trim()}
-        >
-          发送
-        </Button>
-      </View>
+      {/* 只有在对话进行中时才显示输入框 */}
+      {chatData?.status !== 'completed' && (
+        <View className="input-container">
+          <Input
+            value={input}
+            className="input-box"
+            placeholder="请输入内容..."
+            onInput={e => setInput(e.detail.value)}
+            focus={false}
+          />
+          <Button
+            className="send-button"
+            onClick={sendMessage}
+            disabled={!input.trim()}
+          >
+            发送
+          </Button>
+        </View>
+      )}
 
       <ChatExitModal
         visible={showExitModal}
@@ -393,6 +477,7 @@ const ChatPage: React.FC = () => {
     </View>
   );
 };
+
 
 
 export default ChatPage;

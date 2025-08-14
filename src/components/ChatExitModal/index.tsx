@@ -23,6 +23,7 @@ const ChatExitModal: React.FC<ChatExitModalProps> = ({
   };
 
   const handleRating = (rating: string) => {
+    console.log('用户选择评价:', rating); // 添加调试日志
     onEndChat(rating);
     setShowRating(false);
     onClose();
@@ -36,16 +37,15 @@ const ChatExitModal: React.FC<ChatExitModalProps> = ({
   if (!visible) return null;
 
   return (
-    <View className="modal-overlay">
-      <View className="modal-container">
+    <View className="modal-overlay" onClick={onClose}>
+      <View className="modal-container" onClick={(e) => e.stopPropagation()}>
         {!showRating ? (
           // 退出确认弹窗
           <View className="exit-modal">
             <View className="modal-header">
-              <Text className="modal-title">退出对话</Text>
+              <Text className="modal-title">请选择您希望的操作方式</Text>
             </View>
-            <View className="modal-content">
-              <Text className="modal-text">请选择退出方式：</Text>
+            <View style={{padding: '12px'}}>
             </View>
             <View className="modal-actions">
               <Button
@@ -64,7 +64,7 @@ const ChatExitModal: React.FC<ChatExitModalProps> = ({
                 className="action-btn cancel"
                 onClick={onClose}
               >
-                取消
+                继续对话
               </Button>
             </View>
           </View>
@@ -75,7 +75,7 @@ const ChatExitModal: React.FC<ChatExitModalProps> = ({
               <Text className="modal-title">为本次对话评分</Text>
             </View>
             <View className="modal-content">
-              <Text className="modal-text">请为解答员的回答质量打分：</Text>
+              <Text className="modal-text">您对本次解答的满意程度如何？</Text>
             </View>
             <View className="rating-actions">
               <Button

@@ -264,7 +264,7 @@ const PersonalCenter: React.FC = () => {
                 size="large"
                 url={getRandomPictureByCommunity(chat.community)}
                 title={chat.content}
-                tags={Array.isArray(chat.taps) ? chat.taps : []}
+                tags={Array.isArray(chat.tags) ? chat.tags : []}
                 onClick={() => {
                   Taro.navigateTo({
                     url: `/pages/chat/index?chatId=${chat._id}`
@@ -295,7 +295,7 @@ const PersonalCenter: React.FC = () => {
                 size="large"
                 url={getRandomPictureByCommunity(chat.community)}
                 title={chat.content}
-                tags={Array.isArray(chat.taps) ? chat.taps : []}
+                tags={Array.isArray(chat.tags) ? chat.tags : []}
                 onClick={() => {
                   Taro.navigateTo({
                     url: `/pages/chat/index?chatId=${chat._id}`

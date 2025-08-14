@@ -22,7 +22,7 @@
     justify-content: center;
     border-radius: 36rpx;
     box-shadow: 4rpx 4rpx rgba(0, 0, 0, 0.1);
-    margin-bottom: 20rpx;
+    margin: 20rpx 0;
 
     .up {
       width: 100%;
@@ -30,22 +30,6 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-
-      .picture {
-        width: 35%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        .card-icon {
-          width: 80%;
-          height: 90%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-        }
       }
 
       .contents {
@@ -68,40 +52,60 @@
       }
     }
   }
-}
+
 
 .custom-navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 44px;
-  background: #fff;
+  height: 88rpx; // 微信小程序标准高度
+  width: 100vw;
+  background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  border-bottom: 1px solid #eee;
+  padding: 0 32rpx 0 16rpx; // 左侧padding小一些，右侧大一些
+  border-bottom: 1rpx solid #e5e5e5; // 更细的边框
   z-index: 1000;
+  // 去掉阴影，微信原生导航栏没有阴影
 
   .nav-left {
+    width: 64rpx;
+    height: 64rpx;
     display: flex;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
+    border-radius: 50%; // 圆形点击区域
 
     .back-icon {
-      font-size: 20px;
-      margin-right: 8px;
+      font-size: 36rpx; // 稍微大一点
+      color: #000000; // 纯黑色，更像原生
+      font-weight: normal; // 不要加粗
+      line-height: 1;
     }
 
-    .back-text {
-      font-size: 16px;
+    &:active {
+      background-color: #f2f2f2; // 点击时的背景色
     }
   }
 
   .nav-title {
-    font-size: 18px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); // 绝对居中
+    font-size: 34rpx; // 微信标准字号
     font-weight: 600;
+    color: #000000; // 纯黑色
+    text-align: center;
+    max-width: 60%; // 限制最大宽度，避免被左右按钮遮挡
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-right {
+    width: 64rpx;
+    height: 64rpx;
+    // 可以在这里添加右侧按钮，比如更多操作
   }
 }
 
@@ -109,9 +113,9 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20rpx 5% 200rpx 5%;
-  gap: 20rpx; /* 消息间距 */
-  padding-top: 44px; // 为自定义导航栏留出空间
+  padding: 20px 5% 200rpx 5%;
+  gap: 20rpx;
+  padding-top: 88rpx; // 调整为导航栏高度
 
   .ai {
     max-width: 80%;
@@ -289,6 +293,37 @@
     font-size: 16px;
   }
 }
+
+  .question-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    .tag {
+      padding: 4px 8px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+  }
+
+
+.no-messages {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+
+  .text {
+    font-size: 16px;
+  }
+}
+
+.send-button:disabled {
+  background-color: #ccc !important;
+  color: #999 !important;
+}
+
 
   .question-tags {
     display: flex;
