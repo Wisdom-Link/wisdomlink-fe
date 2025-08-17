@@ -4,7 +4,7 @@ import devConfig from './dev'
 import prodConfig from './prod'
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
-export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
+export default defineConfig<'webpack5'>(async (merge) => {
   const baseConfig: UserConfigExport<'webpack5'> = {
     projectName: 'WisdomLink',
     date: '2025-3-18',
@@ -49,6 +49,14 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
       },
       webpackChain(chain) {
         chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
+        chain.module
+          .rule('js')
+          .test(/\.(js|ts)$/)
+          .include.add(/node_modules/)
+          .end()
+          .use('babel')
+          .loader('babel-loader')
+
       }
     },
     h5: {

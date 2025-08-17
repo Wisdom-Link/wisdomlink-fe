@@ -1,7 +1,7 @@
 /* eslint-disable jsx-quotes */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Taro, { useDidShow, getCurrentInstance } from "@tarojs/taro";
-import { View, Image, Button, Input } from "@tarojs/components";
+import { View, Button, Input } from "@tarojs/components";
 import ChatExitModal from "../../components/ChatExitModal";
 import { ChatMessage,ChatData,updateChatStatus, addMessageToChat, getChatWithDetails, saveChat, evaluateUser } from "../../apis/chat";
 import { deleteThreadById } from "../../apis/thread";
@@ -22,6 +22,12 @@ const ChatPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isNewChat, setIsNewChat] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [routeParams, setRouteParams] = useState<any>(null); // 新增状态保存路由参数
+
+  // 添加轮询相关状态
+  const [isPolling, setIsPolling] = useState(false);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const lastMessageCountRef = useRef<number>(0);
 
   console.log('ChatPage state 初始化完成');
 
@@ -33,6 +39,7 @@ const ChatPage: React.FC = () => {
     const params = router?.params;
 
     console.log('路由参数:', params);
+    setRouteParams(params); // 保存路由参数
 
     // 获取当前用户信息
     const userInfo = Taro.getStorageSync('userInfo');
@@ -135,9 +142,9 @@ const ChatPage: React.FC = () => {
       setMessages(chat.data.messages || []);
 
       // 判断用户角色
-      if (chat.questionUsername === currentUsername) {
+      if (chat.data.questionUsername === currentUsername) {
         setUserRole('questioner');
-      } else if (chat.answerUsername === currentUsername) {
+      } else if (chat.data.answerUsername === currentUsername) {
         setUserRole('answerer');
       }
     } catch (error) {
@@ -184,12 +191,12 @@ const ChatPage: React.FC = () => {
         throw new Error('缺少必要的用户名或社区信息');
       }
 
-      // 创建新对话数据
+      // 修正角色：当前用户是答题者，partnerUsername是提问者
       const newChatData = {
-        questionUsername: currentUsername,
-        answerUsername: partnerUsername,
-        questionUserId: currentUsername,
-        answerUserId: partnerUsername,
+        questionUsername: partnerUsername,  // 提问者是帖子发布者
+        answerUsername: currentUsername,    // 答题者是当前用户
+        questionUserId: partnerUsername,
+        answerUserId: currentUsername,
         content: decodedContent,
         tags: decodedTags,
         community: decodedCommunity,
@@ -204,13 +211,13 @@ const ChatPage: React.FC = () => {
       setChatId(savedChat._id);
       setChatData(savedChat);
       setMessages([]);
-      setUserRole('questioner');
+      setUserRole('answerer'); // 当前用户是答题者
 
       Taro.showToast({ title: '对话创建成功', icon: 'success' });
 
       // 异步删除原始帖子
       const router = getCurrentInstance().router;
-      const postId = router?.params?.postId;
+      const postId = router && router.params && router.params.postId ? router.params.postId : '';
       if (postId) {
         setTimeout(() => {
           deleteThreadById(postId).catch(error => {
@@ -225,6 +232,139 @@ const ChatPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // 新增：轮询获取最新消息的函数
+  const pollLatestMessages = async () => {
+    if (!chatId || !currentUser) {
+      return;
+    }
+
+    try {
+      console.log('轮询获取最新消息, chatId:', chatId);
+      const response = await getChatWithDetails(chatId);
+      const latestChatData = response.data;
+
+      if (latestChatData && latestChatData.messages) {
+        const latestMessages = latestChatData.messages;
+        const currentMessageCount = latestMessages.length;
+
+        // 检查是否有新消息
+        if (currentMessageCount > lastMessageCountRef.current) {
+          console.log(`发现新消息: ${currentMessageCount} vs ${lastMessageCountRef.current}`);
+
+          // 获取新消息（从上次记录的位置开始）
+          const newMessages = latestMessages.slice(lastMessageCountRef.current);
+
+          // 检查新消息是否来自其他用户
+          const hasNewMessageFromOthers = newMessages.some(msg =>
+            msg.senderUsername !== currentUser.username
+          );
+
+          if (hasNewMessageFromOthers) {
+            // 播放提示音或震动
+            if (process.env.TARO_ENV === 'weapp') {
+              Taro.vibrateShort();
+            }
+            console.log('收到来自其他用户的新消息');
+          }
+
+          // 更新消息列表
+          setMessages(latestMessages);
+          lastMessageCountRef.current = currentMessageCount;
+        }
+
+        // 检查对话状态是否发生变化
+        if (latestChatData.status !== chatData?.status) {
+          console.log(`对话状态变化: ${chatData?.status} -> ${latestChatData.status}`);
+          setChatData(latestChatData);
+
+          if (latestChatData.status === 'completed') {
+            Taro.showToast({
+              title: '对话已结束',
+              icon: 'none'
+            });
+            // 停止轮询
+            setIsPolling(false);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('轮询获取消息失败:', error);
+      // 网络错误时不显示toast，避免频繁提示
+    }
+  };
+
+  // 新增：开始轮询
+  const startPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+    }
+
+    setIsPolling(true);
+    pollingIntervalRef.current = setInterval(() => {
+      pollLatestMessages();
+    }, 5000); // 每5秒轮询一次
+
+    console.log('开始轮询，间隔5秒');
+  };
+
+  // 新增：停止轮询
+  const stopPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setIsPolling(false);
+    console.log('停止轮询');
+  };
+
+  // 监听聊天ID和用户信息，开始轮询
+  useEffect(() => {
+    if (chatId && currentUser && chatData?.status === 'ongoing') {
+      // 初始化消息计数
+      lastMessageCountRef.current = messages.length;
+      startPolling();
+    } else {
+      stopPolling();
+    }
+
+    // 清理函数
+    return () => {
+      stopPolling();
+    };
+  }, [chatId, currentUser, chatData?.status, messages.length, startPolling]);
+
+  // 页面隐藏时停止轮询，显示时恢复轮询
+  useDidShow(() => {
+    console.log('useDidShow 被调用');
+
+    // 设置页面标题
+    Taro.setNavigationBarTitle({ title: '聊天' });
+
+    // 如果有活跃的聊天且对话进行中，恢复轮询
+    if (chatId && currentUser && chatData?.status === 'ongoing') {
+      console.log('页面显示，恢复轮询');
+      startPolling();
+    }
+
+    // 移除原有的返回按钮拦截逻辑，因为现在使用自定义导航栏
+  });
+
+  // 页面隐藏时停止轮询
+  useEffect(() => {
+    const handlePageHide = () => {
+      console.log('页面隐藏，停止轮询');
+      stopPolling();
+    };
+
+    // 在小程序中监听页面隐藏事件
+    if (process.env.TARO_ENV === 'weapp') {
+      Taro.onAppHide(handlePageHide);
+      return () => {
+        Taro.offAppHide(handlePageHide);
+      };
+    }
+  }, []);
 
   // 发送消息
   const sendMessage = async () => {
@@ -242,14 +382,18 @@ const ChatPage: React.FC = () => {
 
     try {
       // 立即更新UI
-      setMessages(prev => [...prev, tempMessage]);
+      setMessages(prev => {
+        const newMessages = [...prev, tempMessage];
+        lastMessageCountRef.current = newMessages.length;
+        return newMessages;
+      });
       setInput('');
 
       // 发送到后端
       const response = await addMessageToChat(chatId, messageContent);
 
       // 如果后端返回了最新消息，可以用来同步
-      if (response?.data?.lastMessage) {
+      if (response && response.data && response.data.lastMessage) {
         setMessages(prev => {
           const newMessages = [...prev];
           // 替换最后一条消息为服务器返回的版本
@@ -263,45 +407,53 @@ const ChatPage: React.FC = () => {
         });
       }
 
+      // 发送成功后立即轮询一次，获取最新状态
+      setTimeout(() => {
+        pollLatestMessages();
+      }, 1000);
+
     } catch (error: any) {
       console.error('发送消息失败:', error);
 
       // 根据错误类型显示不同提示
-      if (error.message?.includes('对话已结束')) {
+      if (error.message && error.message.includes('对话已结束')) {
         Taro.showToast({ title: '对话已结束，无法发送消息', icon: 'none' });
-      } else if (error.message?.includes('无权限')) {
+      } else if (error.message && error.message.includes('无权限')) {
         Taro.showToast({ title: '没有权限发送消息', icon: 'none' });
       } else {
         Taro.showToast({ title: '发送失败，请重试', icon: 'error' });
       }
 
       // 发送失败时回滚UI
-      setMessages(prev => prev.slice(0, -1));
+      setMessages(prev => {
+        const rolledBackMessages = prev.slice(0, -1);
+        lastMessageCountRef.current = rolledBackMessages.length;
+        return rolledBackMessages;
+      });
       setInput(messageContent);
     }
-  };
-
-  // 处理暂时退出
-  const handleTempExit = () => {
-    Taro.navigateBack();
   };
 
   // 处理结束对话
   const handleEndChat = async (rating?: string) => {
     try {
+      // 先停止轮询
+      stopPolling();
+
       if (chatId) {
         // 调用 updateChatStatus 接口更新对话状态为已完成
         await updateChatStatus(chatId, 'completed');
+
         Taro.showToast({
           title: '对话已结束',
           icon: 'success'
         });
-        
+
         // 更新本地状态
         setChatData(prev => prev ? { ...prev, status: 'completed' } : prev);
       }
 
-      if (rating && chatData?.answerUsername) {
+      if (rating && chatData && chatData.answerUsername) {
         try {
           // 映射评价等级
           let ratingValue: 'excellent' | 'average' | 'poor';
@@ -318,10 +470,10 @@ const ChatPage: React.FC = () => {
             default:
               ratingValue = 'average';
           }
-          
+
           // 调用评价接口
           await evaluateUser(chatData.answerUsername, ratingValue);
-          
+
           console.log('用户评价:', { username: chatData.answerUsername, rating: ratingValue });
           Taro.showToast({
             title: `感谢您的"${rating}"评价`,
@@ -329,7 +481,6 @@ const ChatPage: React.FC = () => {
           });
         } catch (evaluateError) {
           console.error('评价提交失败:', evaluateError);
-          // 评价失败不影响对话结束，只显示警告
           Taro.showToast({
             title: '评价提交失败，但对话已结束',
             icon: 'none'
@@ -350,20 +501,28 @@ const ChatPage: React.FC = () => {
   // 处理自定义返回按钮点击
   const handleBackClick = () => {
     console.log('自定义返回按钮被点击, userRole:', userRole, 'status:', chatData?.status);
+
     // 如果对话已完成，直接返回不显示弹窗
     if (chatData?.status === 'completed') {
       Taro.navigateBack();
       return;
     }
 
-    // 如果是提问者且对话正在进行，显示退出弹窗
+    // 只有提问者才显示退出弹窗，回答者直接返回
     if (userRole === 'questioner') {
       setShowExitModal(true);
     } else {
-      Taro.navigateBack();
+      // 回答者直接调用 handleTempExit 逻辑
+      handleTempExit();
     }
   };
 
+  // 处理暂时退出
+  const handleTempExit = () => {
+    // 停止轮询
+    stopPolling();
+    Taro.navigateBack();
+  };
 
   // 渲染消息
   const renderMessage = (message: ChatMessage, index: number) => {
@@ -405,7 +564,20 @@ const ChatPage: React.FC = () => {
         <View className="nav-left" onClick={handleBackClick}>
           <View className="back-icon">‹</View>
         </View>
-        <View className="nav-title">聊天</View>
+        <View className="nav-title">
+          聊天
+          {/* 添加轮询状态指示器（可选） */}
+          {isPolling && (
+            <View className="polling-indicator" style={{
+              fontSize: '12px',
+              color: '#00D819',
+              marginLeft: '8px'
+            }}
+            >
+              ●
+            </View>
+          )}
+        </View>
         <View className="nav-right"></View>
       </View>
 
@@ -416,27 +588,19 @@ const ChatPage: React.FC = () => {
               <View className="contents">
                 <View className="card-title">问题内容</View>
                 <View className="text">
-                  {chatData?.content || '正在加载问题内容...'}
+                  {/* 优先显示chatData中的内容，新对话时显示路由参数中的内容 */}
+                  {chatData && chatData.content
+                    ? chatData.content
+                    : (routeParams && routeParams.postContent
+                        ? decodeURIComponent(routeParams.postContent)
+                        : '正在加载问题内容...'
+                      )
+                  }
                 </View>
               </View>
             </View>
           </View>
         </View>
-
-        {/* 显示原始问题（仅新对话时显示） */}
-        {isNewChat && chatData?.content && (
-          <View className="original-question">
-            <View className="question-label">原始问题：</View>
-            <View className="question-content">{chatData.content}</View>
-            {chatData.tags && chatData.tags.length > 0 && (
-              <View className="question-tags">
-                {chatData.tags.map((tag, idx) => (
-                  <View key={idx} className="tag">{tag}</View>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
 
         {/* 消息列表 */}
         {messages.map((message, index) => renderMessage(message, index))}
@@ -449,7 +613,7 @@ const ChatPage: React.FC = () => {
       </View>
 
       {/* 只有在对话进行中时才显示输入框 */}
-      {chatData?.status !== 'completed' && (
+      {chatData && chatData.status !== 'completed' && (
         <View className="input-container">
           <Input
             value={input}
@@ -477,7 +641,5 @@ const ChatPage: React.FC = () => {
     </View>
   );
 };
-
-
 
 export default ChatPage;

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-quotes */
-import { useState, useEffect } from "react";
-import Taro from "@tarojs/taro";
-import { View, Button, Text } from "@tarojs/components";
+import { useState } from "react";
+import Taro, { useDidShow } from "@tarojs/taro";
+import { View, Button } from "@tarojs/components";
 import { AtTabs } from "taro-ui";
 import { getQuestionerChats, getAnswererChats } from "../../apis/chat";
 import { Chat } from "../../types/chat";
@@ -44,9 +44,9 @@ const ChatList: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  useDidShow(() => {
     fetchChatData();
-  }, []);
+  });
 
   // 根据标签页切换数据
   const chatList = current === 0 ? questionerChats : answererChats;

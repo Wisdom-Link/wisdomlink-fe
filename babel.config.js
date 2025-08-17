@@ -1,6 +1,6 @@
 // babel-preset-taro 更多选项和默认值：
 // https://docs.taro.zone/docs/next/babel-config
-module.exports = {
+export default {
   presets: [
     ['taro', {
       framework: 'react',
@@ -8,5 +8,8 @@ module.exports = {
       compiler: 'webpack5',
       useBuiltIns: process.env.TARO_ENV === 'h5' ? 'usage' : false
     }]
+  ],
+  plugins: [
+    '@babel/plugin-proposal-optional-chaining'
   ]
 }

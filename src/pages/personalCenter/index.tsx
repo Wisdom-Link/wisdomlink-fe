@@ -150,6 +150,7 @@ const PersonalCenter: React.FC = () => {
     const refreshData = async () => {
       await fetchUserInfo();
       await fetchUserThreads();
+      await fetchChatData();
     };
     refreshData();
   });

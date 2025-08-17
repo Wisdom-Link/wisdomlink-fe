@@ -21,9 +21,9 @@ const GoodAnswerer: React.FC = () => {
   const [customTag, setCustomTag] = useState("");
   const [customTag2, setCustomTag2] = useState("");
 
-  // 标签体系
-  const tagSystem = {
-    "1": { // 学业发展
+  // 标签体系 - 使用类型断言避免动态访问问题
+  const tagSystem: Record<string, any> = {
+    "1": {
       title: "学业发展",
       secondTags: {
         "升学规划": ["考研备战", "保研攻略", "留学申请", "转专业指南"],
@@ -32,7 +32,7 @@ const GoodAnswerer: React.FC = () => {
         "校园生活": ["社团选择", "宿舍关系", "校园政策", "心理调适"]
       }
     },
-    "2": { // 家庭建设
+    "2": {
       title: "家庭建设",
       secondTags: {
         "孕产护理": ["备孕指南", "产检流程", "产后康复", "哺乳技巧"],
@@ -41,7 +41,7 @@ const GoodAnswerer: React.FC = () => {
         "家庭关系": ["夫妻协作", "隔代教育", "二胎准备", "心理疏导"]
       }
     },
-    "3": { // 事业进阶
+    "3": {
       title: "事业进阶",
       secondTags: {
         "求职准备": ["简历优化", "笔试题库", "面试技巧", "Offer选择"],
@@ -55,9 +55,14 @@ const GoodAnswerer: React.FC = () => {
   useEffect(() => {
     // 从 URL 获取 id 参数
     const router = getCurrentInstance().router;
-    const id = router?.params?.id || "1";
+    const id = (router && router.params && router.params.id) ? router.params.id : "1";
     setCategoryId(id);
-    const title = tagSystem[id]?.title || "未知分类";
+
+    // 避免可选链操作符
+    let title = "未知分类";
+    if (tagSystem[id] && tagSystem[id].title) {
+      title = tagSystem[id].title;
+    }
     setCategoryTitle(title);
 
     // 获取对应社区的帖子
@@ -68,7 +73,7 @@ const GoodAnswerer: React.FC = () => {
       } catch (error) {
         console.error("获取社区帖子失败:", error);
         Taro.showToast({ title: "获取数据失败", icon: "none" });
-        setPosts([]); // 设置为空数组
+        setPosts([]);
       }
     };
 
@@ -109,10 +114,10 @@ const GoodAnswerer: React.FC = () => {
       // 构建帖子数据
       const postData = {
         content: formText,
-        username: userInfo?.username || "匿名用户",
-        userAvatar: userInfo?.avatar || defaultAvatar,
-        community: categoryTitle, // 学业发展/家庭建设/事业进阶
-        location: "未知位置", // 可以后续从地理位置获取
+        username: (userInfo && userInfo.username) ? userInfo.username : "匿名用户",
+        userAvatar: (userInfo && userInfo.avatar) ? userInfo.avatar : defaultAvatar,
+        community: categoryTitle,
+        location: "未知位置",
         tags: tags,
         createdAt: new Date().toISOString()
       };
@@ -136,8 +141,9 @@ const GoodAnswerer: React.FC = () => {
     }
   };
 
-  const currentTags = tagSystem[categoryId]?.secondTags || {};
-  const thirdTags = selectedSecondTag ? currentTags[selectedSecondTag] || [] : [];
+  // 避免可选链操作符
+  const currentTags = (tagSystem[categoryId] && tagSystem[categoryId].secondTags) ? tagSystem[categoryId].secondTags : {};
+  const thirdTags = (selectedSecondTag && currentTags[selectedSecondTag]) ? currentTags[selectedSecondTag] : [];
 
   return (
     <>
@@ -156,14 +162,17 @@ const GoodAnswerer: React.FC = () => {
               tags={post.tags}
               mode="answer"
               onAnswer={(username) => {
+                const tags = post.tags || [];
+                const community = post.community || categoryTitle;
                 Taro.navigateTo({
-                  url: `/pages/chat/index?username=${username}&postContent=${encodeURIComponent(post.content)}&postTags=${encodeURIComponent((post.tags ?? []).join(','))}&postId=${post._id}&community=${encodeURIComponent(post.community || categoryTitle)}`
+                  url: `/pages/chat/index?username=${username}&postContent=${encodeURIComponent(post.content)}&postTags=${encodeURIComponent(tags.join(','))}&postId=${post._id}&community=${encodeURIComponent(community)}`
                 });
               }}
             />
           ))}
         </View>
       </View>
+
       {/* 弹窗表单 */}
       <AtModal isOpened={showModal} onClose={() => setShowModal(false)}>
         <AtModalHeader>发布问题</AtModalHeader>
@@ -174,19 +183,19 @@ const GoodAnswerer: React.FC = () => {
             type="text"
             placeholder="请输入问题内容"
             value={formText}
-            onChange={v => setFormText(v as string)}
+            onChange={(v) => setFormText(v as string)}
           />
 
           <View style={{ margin: "16px 0 8px 0" }}>二级标签</View>
           <View style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" }}>
-            {Object.keys(currentTags).map(tag => (
+            {Object.keys(currentTags).map((tag) => (
               <AtTag
                 key={tag}
                 circle
                 active={selectedSecondTag === tag}
                 onClick={() => {
                   setSelectedSecondTag(tag);
-                  setSelectedThirdTag(""); // 重置三级标签
+                  setSelectedThirdTag("");
                 }}
               >
                 {tag}
@@ -198,7 +207,7 @@ const GoodAnswerer: React.FC = () => {
             <>
               <View style={{ margin: "8px 0" }}>三级标签</View>
               <View style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {thirdTags.map(tag => (
+                {thirdTags.map((tag) => (
                   <AtTag
                     key={tag}
                     circle
@@ -218,7 +227,7 @@ const GoodAnswerer: React.FC = () => {
             type="text"
             placeholder="可输入自定义标签（可选）"
             value={customTag}
-            onChange={v => setCustomTag(v as string)}
+            onChange={(v) => setCustomTag(v as string)}
           />
           <AtInput
             name="customTag2"
@@ -226,7 +235,7 @@ const GoodAnswerer: React.FC = () => {
             type="text"
             placeholder="可输入第二个自定义标签（可选）"
             value={customTag2}
-            onChange={v => setCustomTag2(v as string)}
+            onChange={(v) => setCustomTag2(v as string)}
           />
         </AtModalContent>
         <AtModalAction>
@@ -239,6 +248,7 @@ const GoodAnswerer: React.FC = () => {
           </Button>
         </AtModalAction>
       </AtModal>
+
       {/* 可拖动按钮*/}
       <BtnCanMove
         onClick={() => setShowModal(true)}
@@ -246,7 +256,6 @@ const GoodAnswerer: React.FC = () => {
     </>
   );
 };
-
 
 export default GoodAnswerer;
 
